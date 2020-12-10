@@ -1,0 +1,17 @@
+.year {
+  display: grid;
+  grid-gap: 1px;
+  padding: 1vh 1vw;
+  margin-top: 1vh;
+  height: calc(97vh - 50px);
+}
+@media screen and (orientation: portrait) {
+  .year {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+@media screen and (orientation: landscape) {
+  .year {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

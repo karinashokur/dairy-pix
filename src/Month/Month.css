@@ -1,0 +1,14 @@
+.month {
+  display: grid;
+  grid-gap: 2px;
+}
+@media screen and (orientation: portrait) {
+  .month {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+@media screen and (orientation: landscape) {
+  .month {
+    grid-template-columns: repeat(31, 1fr);
+  }
+}

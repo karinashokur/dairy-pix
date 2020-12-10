@@ -1,0 +1,5 @@
+.day {
+  display: grid;
+  cursor: pointer;
+  background: #37474f;
+}
