@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import './Day.css';
 class Day extends Component {
   render() {
-    return <div className="day"></div>;
+    let className = 'day';
+    if(this.props.filler) {
+      className += ' filler';
+    }
+    return <div className={className}></div>;
   }
 }
 export default Day;

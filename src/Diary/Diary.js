@@ -22,7 +22,7 @@ class Diary extends Component {
             </Tooltip>
           </Toolbar>
         </AppBar>
-        <Year year={date.getFullYear()} month={date.getMonth()} day={date.getDate()} />
+        <Year key={date.getFullYear()} year={date.getFullYear()} month={date.getMonth()} day={date.getDate()} />
       </div>
     );
   }
