@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import './Diary.css';
+import './App.css';
 import Year from '../Year/Year';
 import { AppBar, Toolbar, Typography, IconButton, Tooltip } from '@material-ui/core';
 import { ZoomIn, BarChart, CloudOff } from '@material-ui/icons';
-class Diary extends Component {
+class App extends Component {
   render() {
     let date = new Date();
     return (
@@ -27,4 +27,4 @@ class Diary extends Component {
     );
   }
 }
-export default Diary;
+export default App;
