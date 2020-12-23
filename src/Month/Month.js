@@ -3,10 +3,16 @@ import './Month.css';
 import Day from '../Day/Day';
 class Month extends Component {
   render() {
-    let days = [];
+    const days = [];
     for (let i = 0; i < 31; i++) {
-      let key = this.props.year + '-' + this.props.month + '-' + i;
-      days.push(<Day key={key} filler={i >= this.props.amountDays} />);
+      const key = this.props.year + '-' + this.props.month + '-' + i;
+      const data = this.props.data[i] ? this.props.data[i] : {};
+      days.push(
+        <Day key={key}
+          filler={i >= this.props.amountDays} data={data}
+          onClick={() => this.props.onClickDay(i)}
+        />
+      );
     }
     return <div className="month">{days}</div>;
   }
