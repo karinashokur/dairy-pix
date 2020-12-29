@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import './Month.css';
 import Day from '../Day/Day';
-class Month extends Component {
+type MonthProps = {
+  year: number;
+  month: number;
+  amountDays: number;
+  data: any; 
+  onClickDay: (day: number) => void;
+}
+class Month extends Component<MonthProps> {
   render() {
     const days = [];
     for (let i = 0; i < 31; i++) {

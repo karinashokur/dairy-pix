@@ -4,8 +4,13 @@ import Year from '../Year/Year';
 import { AppBar, Toolbar, Typography, IconButton, Tooltip } from '@material-ui/core';
 import { ZoomIn, BarChart, CloudOff } from '@material-ui/icons';
 import StorageHandler from '../Storage/StorageHandler';
-class App extends Component {
-  constructor(props) {
+type AppProps = {
+  name?: string;
+}
+class App extends Component<AppProps> {
+  storage: StorageHandler;
+  state: Readonly<{preferences: any; years: any}> 
+  constructor(props: AppProps) {
     super(props);
     this.storage = new StorageHandler();
     this.state = {
@@ -59,13 +64,13 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         <Year key={year}
-          year={year} month={date.getMonth()} day={date.getDate()} data={data}
+          year={year}  data={data}
           onClickDay={(month, day) => this.handleClickDay(year, month, day)}
         />
       </div>
     );
   }
-  handleClickDay(year, month, day) {
+  handleClickDay(year: number, month: number, day: number) {
     const newYears = { ...this.state.years };
     if(!newYears[year]) { newYears[year] = {}; }
     if(!newYears[year][month]) { newYears[year][month] = {}; }
@@ -74,12 +79,12 @@ class App extends Component {
       this.saveYear(year);
     });
   }
-  saveYear(year) {
+  saveYear(year: number) {
     if(this.state.years[year]) {
       this.storage.save(year, JSON.stringify(this.state.years[year]))
     }
   }
-  loadYear(year) {
+  loadYear(year: number) {
     const updatedYears = { ...this.state.years };
     const data = this.storage.load(year);
     if(data) {

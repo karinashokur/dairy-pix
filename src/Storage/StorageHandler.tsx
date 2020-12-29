@@ -1,14 +1,15 @@
 class StorageHandler {
+  cloud: boolean | any; 
   constructor() {
     this.cloud = false; 
   }
-  save(key, value) {
+  save(key: any, value: any) {
     if(this.cloud) {
       return this.cloud.save(key, value);
     }
     localStorage.setItem(key, value); 
   }
-  load(key) {
+  load(key: any) {
     if(this.cloud) {
       return this.cloud.load(key);
     }
