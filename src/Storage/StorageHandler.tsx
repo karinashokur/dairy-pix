@@ -1,19 +1,19 @@
-class StorageHandler {
-  cloud: boolean | any; 
+import Cloud from './Cloud';
+export default class StorageHandler {
+  cloud: false | Cloud;
   constructor() {
     this.cloud = false; 
   }
-  save(key: any, value: any) {
+  save(key: string, value: string): void {
     if(this.cloud) {
       return this.cloud.save(key, value);
     }
     localStorage.setItem(key, value); 
   }
-  load(key: any) {
+  load(key: string): string | null {
     if(this.cloud) {
       return this.cloud.load(key);
     }
     return localStorage.getItem(key);
   }
 }
-export default StorageHandler;

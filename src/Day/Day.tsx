@@ -1,19 +1,21 @@
+import classNames from 'classnames';
 import React, { Component } from 'react';
 import './Day.css';
-import classNames from 'classnames';
+export type DayModel = {
+  isColored?: boolean
+}
 type DayProps = {
-  filler: boolean;
-  data: any; 
+  data: DayModel;
+  isFiller: boolean;
   onClick: () => void;
 }
-class Day extends Component<DayProps> {
+export default class Day extends Component<DayProps> {
   render() {
     const classes = classNames({
       'day': true,
-      'filler': this.props.filler,
-      'colored': this.props.data.color
+      'filler': this.props.isFiller,
+      'colored': this.props.data.isColored && !this.props.isFiller
     });
-    return <div className={classes} onClick={!this.props.filler ? this.props.onClick : undefined}></div>;
+    return <div className={classes} onClick={!this.props.isFiller ? this.props.onClick : undefined}></div>;
   }
 }
-export default Day;
