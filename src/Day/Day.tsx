@@ -1,21 +1,19 @@
 import classNames from 'classnames';
-import React, { Component } from 'react';
+import React from 'react';
 import './Day.css';
-export type DayModel = {
-  isColored?: boolean
+export interface DayModel {
+  isColored?: boolean;
 }
-type DayProps = {
+interface DayProps {
   data: DayModel;
   isFiller: boolean;
   onClick: () => void;
 }
-export default class Day extends Component<DayProps> {
-  render() {
-    const classes = classNames({
-      'day': true,
-      'filler': this.props.isFiller,
-      'colored': this.props.data.isColored && !this.props.isFiller
-    });
-    return <div className={classes} onClick={!this.props.isFiller ? this.props.onClick : undefined}></div>;
-  }
-}
+export const Day: React.FC<DayProps> = ({ data, isFiller, onClick }) => {
+  const classes = classNames({
+    day: true,
+    filler: isFiller,
+    colored: data.isColored && !isFiller,
+  });
+  return <div className={classes} onClick={!isFiller ? onClick : undefined}></div>;
+};

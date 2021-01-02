@@ -1,0 +1,33 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "jsx": true,
+    "useJSXTextNode": true
+  },
+  "extends": [
+    "airbnb-typescript"
+  ],
+  "plugins": [
+    "react",
+    "react-hooks",
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "@typescript-eslint/indent": ["error", 2],
+    "react/self-closing-comp": "off",
+    "react/prop-types": "off",
+    "react/sort-comp": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "linebreak-style": ["error", "windows"],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "object-curly-newline": "off",
+    "lines-between-class-members": "off"
+  },
+  "globals": {
+    "document": true,
+    "localStorage": true,
+    "it": true
+  }
+}
