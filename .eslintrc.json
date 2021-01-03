@@ -20,7 +20,7 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "jsx-a11y/click-events-have-key-events": "off",
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": "off",
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "object-curly-newline": "off",
     "lines-between-class-members": "off"
