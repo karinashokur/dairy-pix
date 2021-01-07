@@ -7,7 +7,7 @@ export interface YearModel {
 interface YearProps {
   year: number;
   months: YearModel;
-  onClickDay: (month: number, day: number) => void;
+  onClickDay: (year: number, month: number, day: number) => void;
 }
 export const Year: React.FC<YearProps> = ({ year, months, onClickDay }) => {
   const renderMonths: JSX.Element[] = [];
@@ -18,7 +18,7 @@ export const Year: React.FC<YearProps> = ({ year, months, onClickDay }) => {
         month={i}
         year={year}
         days={months[i] ? months[i] : {}}
-        onClickDay={day => onClickDay(i, day)}
+        onClickDay={day => onClickDay(year, i, day)}
       />,
     );
   }

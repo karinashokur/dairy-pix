@@ -1,6 +1,8 @@
 import { AppBar, IconButton, Toolbar, Tooltip, Typography } from '@material-ui/core';
 import { BarChart, CloudOff, ZoomIn } from '@material-ui/icons';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { DayModel } from '../Day/Day';
+import DayDetails from '../Day/Details/Details';
 import StorageHandler from '../Storage/StorageHandler';
 import { Year, YearModel } from '../Year/Year';
 import './App.css';
@@ -10,6 +12,7 @@ interface AppProps {
 const App: React.FC<AppProps> = ({ name }) => {
   const storage: StorageHandler = new StorageHandler();
   const currentYear = new Date().getFullYear();
+  const [detailsDate, setDetailsDate] = useState<Date>();
   const [years, setYears] = useState<{[key: number]: YearModel}>({
     2019: { 
       0: {
@@ -55,13 +58,20 @@ const App: React.FC<AppProps> = ({ name }) => {
       storage.save(year.toString(), JSON.stringify(years[year]));
     }
   };
-  const handleClickDay = (year: number, month: number, day: number): void => {
-    const newYears = { ...years };
-    if (!newYears[year]) { newYears[year] = {}; }
-    if (!newYears[year][month]) { newYears[year][month] = {}; }
-    newYears[year][month][day] = { isColored: true };
-    setYears(newYears);
-    saveYear(year);
+  const handleDayDetails = (values?: DayModel): void => {
+    if (!detailsDate) { return; }
+    if (values) {
+      const year = detailsDate.getFullYear();
+      const month = detailsDate.getMonth();
+      const day = detailsDate.getDate();
+      const newYears = { ...years };
+      if (!newYears[year]) { newYears[year] = {}; }
+      if (!newYears[year][month]) { newYears[year][month] = {}; }
+      newYears[year][month][day] = values;
+      setYears(newYears);
+      saveYear(year);
+    }
+    setDetailsDate(undefined);
   };
   const loadYear = (year: number): void => {
     const updatedYears = { ...years };
@@ -94,8 +104,9 @@ const App: React.FC<AppProps> = ({ name }) => {
         key={currentYear}
         year={currentYear}
         months={months}
-        onClickDay={(month, day) => handleClickDay(currentYear, month, day)}
+        onClickDay={(year, month, day) => setDetailsDate(new Date(year, month, day))}
       />
+      {detailsDate && <DayDetails date={detailsDate} onClose={handleDayDetails} />}
     </div>
   );
 };

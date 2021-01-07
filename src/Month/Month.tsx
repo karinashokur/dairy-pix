@@ -18,7 +18,9 @@ export const Month: React.FC<MonthProps> = ({ year, month, days, onClickDay }) =
       <Day
         key={`${year}-${month}-${i}`}
         data={days[i] ? days[i] : {}}
-        isFiller={i >= daysInMonth()}
+        isFiller={
+          i >= daysInMonth() || new Date(year, month, i + 1).getTime() > new Date().getTime()
+        }
         onClick={() => onClickDay(i)}
       />,
     );
