@@ -16,39 +16,39 @@ const App: React.FC<AppProps> = ({ name }) => {
   const [years, setYears] = useState<{[key: number]: YearModel}>({
     2019: { 
       0: {
-        0: { isColored: true },
-        30: { isColored: true },
+        0: { mood: '#026AAA' },
+        30: { mood: '#8B5552' },
       },
       1: {
-        1: { isColored: true },
-        29: { isColored: true }, 
+        1: { mood: '#69A93D' },
+        29: { mood: '#2A1999' }, 
       },
       3: {
-        13: { isColored: true },
-        17: { isColored: true },
+        13: { mood: '#8B5552' },
+        17: { mood: '#1B7D5F' },
       },
       4: {
-        14: { isColored: true },
-        16: { isColored: true },
+        14: { mood: '#1B7D5F' },
+        16: { mood: '#C69570' },
       },
       5: {
-        15: { isColored: true },
+        15: { mood: '#B63542' },
       },
       6: {
-        14: { isColored: true },
-        16: { isColored: true },
+        14: { mood: '#78562A' },
+        16: { mood: '#2A1999' },
       },
       7: {
-        13: { isColored: true },
-        17: { isColored: true },
+        13: { mood: '#C69570' },
+        17: { mood: '#B53FAC' },
       },
       10: {
-        1: { isColored: true },
-        29: { isColored: true },
+        1: { mood: '#026AAA' },
+        29: { mood: '#69A93D' },
       },
       11: {
-        0: { isColored: true },
-        30: { isColored: true },
+        0: { mood: '#78562A' },
+        30: { mood: '#B53FAC' },
       },
     },
   });

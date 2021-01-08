@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import React from 'react';
 import './Day.css';
+import styled from 'styled-components';
 export interface DayModel {
-  isColored?: boolean;
+  mood?: string;
 }
 interface DayProps {
   data: DayModel;
@@ -13,7 +14,9 @@ export const Day: React.FC<DayProps> = ({ data, isFiller, onClick }) => {
   const classes = classNames({
     day: true,
     filler: isFiller,
-    colored: data.isColored && !isFiller,
   });
-  return <div className={classes} onClick={!isFiller ? onClick : undefined}></div>;
+  const Pixel = styled.div`
+    background-color: ${data.mood}
+  `;
+  return <Pixel className={classes} onClick={!isFiller ? onClick : undefined}></Pixel>;
 };
