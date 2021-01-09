@@ -1,22 +1,11 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FilledInput, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { DayModel } from '../Day';
+import { DayModel, Moods } from '../Day';
 import './Details.css';
 interface DayDetailsProps {
   date: Date;
   onClose: (values?: DayModel) => void;
-}
-enum Mood {
-  '#69A93D' = 'Sick',
-  '#C69570' = 'Amazing',
-  '#B53FAC' = 'Really Good',
-  '#78562A' = 'Normal',
-  '#026AAA' = 'Exhausted',
-  '#2A1999' = 'Depressed',
-  '#B63542' = 'Frustrated',
-  '#1B7D5F' = 'Stressed',
-  '#8B5552' = 'Moody'
 }
 const DayDetails: React.FC<DayDetailsProps> = ({ date, onClose }) => {
   const dateString = {
@@ -30,14 +19,12 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, onClose }) => {
       [event.target.name as string]: event.target.value,
     }));
   };
-  let defaultMood = '';
   const renderMoods: JSX.Element[] = [];
-  for (const key in Mood) { 
-    if (!renderMoods.length) { defaultMood = key; }
-    renderMoods.push(<MenuItem key={key} value={key}>{Mood[key]}</MenuItem>);
+  for (const key in Moods) { 
+    renderMoods.push(<MenuItem key={key} value={key}>{Moods[key].name}</MenuItem>);
   }
   const MoodPreview = styled.div`
-    background-color: ${values.mood || defaultMood};
+    background-color: ${Moods[values.mood || 0].color};
   `;
   return (
     <Dialog open onClose={() => onClose()}>
@@ -50,7 +37,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, onClose }) => {
           <FormControl variant="filled" fullWidth>
             <InputLabel htmlFor="mood-select">Mood</InputLabel>
             <Select
-              value={values.mood || defaultMood}
+              value={values.mood || 0}
               input={<FilledInput name="mood" id="mood-select" />}
               onChange={handleChange}
             >

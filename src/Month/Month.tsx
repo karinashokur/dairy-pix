@@ -13,13 +13,13 @@ interface MonthProps {
 export const Month: React.FC<MonthProps> = ({ year, month, days, onClickDay }) => {
   const daysInMonth = () => new Date(year, month + 1, 0).getDate();
   const renderDays: JSX.Element[] = [];
-  for (let i = 0; i < 31; i++) {
+  for (let i = 1; i < 32; i++) {
     renderDays.push(
       <Day
         key={`${year}-${month}-${i}`}
         data={days[i] ? days[i] : {}}
         isFiller={
-          i >= daysInMonth() || new Date(year, month, i + 1).getTime() > new Date().getTime()
+          i > daysInMonth() || new Date(year, month, i).getTime() > new Date().getTime()
         }
         onClick={() => onClickDay(i)}
       />,

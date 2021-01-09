@@ -16,39 +16,39 @@ const App: React.FC<AppProps> = ({ name }) => {
   const [years, setYears] = useState<{[key: number]: YearModel}>({
     2019: { 
       0: {
-        0: { mood: '#026AAA' },
-        30: { mood: '#8B5552' },
+        1: { mood: 4 },
+        31: { mood: 8 },
       },
       1: {
-        1: { mood: '#69A93D' },
-        29: { mood: '#2A1999' }, 
+        2: { mood: 0 },
+        30: { mood: 5 }, 
       },
       3: {
-        13: { mood: '#8B5552' },
-        17: { mood: '#1B7D5F' },
+        14: { mood: 8 },
+        18: { mood: 7 },
       },
       4: {
-        14: { mood: '#1B7D5F' },
-        16: { mood: '#C69570' },
+        15: { mood: 7 },
+        17: { mood: 1 },
       },
       5: {
-        15: { mood: '#B63542' },
+        16: { mood: 6 },
       },
       6: {
-        14: { mood: '#78562A' },
-        16: { mood: '#2A1999' },
+        15: { mood: 3 },
+        17: { mood: 5 },
       },
       7: {
-        13: { mood: '#C69570' },
-        17: { mood: '#B53FAC' },
+        14: { mood: 1 },
+        18: { mood: 2 },
       },
       10: {
-        1: { mood: '#026AAA' },
-        29: { mood: '#69A93D' },
+        2: { mood: 4 },
+        30: { mood: 0 },
       },
       11: {
-        0: { mood: '#78562A' },
-        30: { mood: '#B53FAC' },
+        1: { mood: 3 },
+        31: { mood: 2 },
       },
     },
   });
