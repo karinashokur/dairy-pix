@@ -1,77 +1,35 @@
 import { AppBar, IconButton, Toolbar, Tooltip, Typography } from '@material-ui/core';
 import { BarChart, CloudOff, ZoomIn } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
-import { DayModel } from '../Day/Day';
+import { IDay, Moods } from '../Day/Day';
 import DayDetails from '../Day/Details/Details';
 import StorageHandler from '../Storage/StorageHandler';
-import { Year, YearModel } from '../Year/Year';
+import Year, { IYear } from '../Year/Year';
 import './App.css';
+const generateRandomData = () => {
+  const data: IYear = {};
+  if (localStorage.getItem('randomData')) { 
+    for (let m = 0; m < 12; m++) {
+      data[m] = {};
+      for (let d = 1; d < 32; d++) {
+        data[m][d] = { mood: Math.floor(Math.random() * Moods.length) };
+      }
+    }
+  }
+  return data;
+};
 interface AppProps {
   name: string;
 }
 const App: React.FC<AppProps> = ({ name }) => {
   const storage: StorageHandler = new StorageHandler();
   const currentYear = new Date().getFullYear();
-  const [detailsDate, setDetailsDate] = useState<Date>();
-  const [years, setYears] = useState<{[key: number]: YearModel}>({
-    2019: { 
-      0: {
-        1: { mood: 4 },
-        31: { mood: 8 },
-      },
-      1: {
-        2: { mood: 0 },
-        30: { mood: 5 }, 
-      },
-      3: {
-        14: { mood: 8 },
-        18: { mood: 7 },
-      },
-      4: {
-        15: { mood: 7 },
-        17: { mood: 1 },
-      },
-      5: {
-        16: { mood: 6 },
-      },
-      6: {
-        15: { mood: 3 },
-        17: { mood: 5 },
-      },
-      7: {
-        14: { mood: 1 },
-        18: { mood: 2 },
-      },
-      10: {
-        2: { mood: 4 },
-        30: { mood: 0 },
-      },
-      11: {
-        1: { mood: 3 },
-        31: { mood: 2 },
-      },
-    },
-  });
-  const months = years[currentYear] ? years[currentYear] : {};
+  const [years, setYears] = useState<{[key: number]: IYear}>({ 2019: generateRandomData() });
+  const [details, setDetails] = useState<{date: Date, values: IDay}>();
   const saveYear = (year: number): void => {
     if (years[year]) {
       storage.save(year.toString(), JSON.stringify(years[year]));
     }
-  };
-  const handleDayDetails = (values?: DayModel): void => {
-    if (!detailsDate) { return; }
-    if (values) {
-      const year = detailsDate.getFullYear();
-      const month = detailsDate.getMonth();
-      const day = detailsDate.getDate();
-      const newYears = { ...years };
-      if (!newYears[year]) { newYears[year] = {}; }
-      if (!newYears[year][month]) { newYears[year][month] = {}; }
-      newYears[year][month][day] = values;
-      setYears(newYears);
-      saveYear(year);
-    }
-    setDetailsDate(undefined);
   };
   const loadYear = (year: number): void => {
     const updatedYears = { ...years };
@@ -80,6 +38,21 @@ const App: React.FC<AppProps> = ({ name }) => {
       updatedYears[year] = JSON.parse(data); 
       setYears(updatedYears);
     }
+  };
+  const handleDayDetails = (values?: IDay): void => {
+    if (!details) { return; }
+    if (values) {
+      const year = details.date.getFullYear();
+      const month = details.date.getMonth();
+      const day = details.date.getDate();
+      const newYears = { ...years };
+      if (!newYears[year]) { newYears[year] = {}; }
+      if (!newYears[year][month]) { newYears[year][month] = {}; }
+      newYears[year][month][day] = values;
+      setYears(newYears);
+      saveYear(year);
+    }
+    setDetails(undefined);
   };
   useEffect(() => {
     loadYear(new Date().getFullYear());
@@ -103,10 +76,15 @@ const App: React.FC<AppProps> = ({ name }) => {
       <Year
         key={currentYear}
         year={currentYear}
-        months={months}
-        onClickDay={(year, month, day) => setDetailsDate(new Date(year, month, day))}
+        months={years[currentYear] ? years[currentYear] : {}}
+        onClickDay={(year, month, day) => setDetails({
+          date: new Date(year, month, day),
+          values: years[year][month] && years[year][month][day] ? years[year][month][day] : {},
+        })}
       />
-      {detailsDate && <DayDetails date={detailsDate} onClose={handleDayDetails} />}
+      {details
+        && <DayDetails date={details.date} values={details.values} onClose={handleDayDetails} />
+      }
     </div>
   );
 };

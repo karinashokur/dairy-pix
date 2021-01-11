@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { isNumber } from 'util';
 import './Day.css';
-export interface DayModel {
+export interface IDay {
   mood?: number;
 }
 export const Moods: {color: string, name: string}[] = [
@@ -18,11 +18,11 @@ export const Moods: {color: string, name: string}[] = [
   { color: '#8B5552', name: 'Moody' },
 ];
 interface DayProps {
-  data: DayModel;
+  data: IDay;
   isFiller: boolean;
   onClick: () => void;
 }
-export const Day: React.FC<DayProps> = ({ data, isFiller, onClick }) => {
+const Day: React.FC<DayProps> = ({ data, isFiller, onClick }) => {
   const classes = classNames({
     day: true,
     filler: isFiller,
@@ -32,3 +32,4 @@ export const Day: React.FC<DayProps> = ({ data, isFiller, onClick }) => {
   `;
   return <Pixel className={classes} onClick={!isFiller ? onClick : undefined}></Pixel>;
 };
+export default Day;

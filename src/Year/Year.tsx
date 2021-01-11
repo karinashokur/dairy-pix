@@ -1,15 +1,15 @@
 import React from 'react';
-import { Month, MonthModel } from '../Month/Month';
+import Month, { IMonth } from '../Month/Month';
 import './Year.css';
-export interface YearModel {
-  [key: number]: MonthModel;
+export interface IYear {
+  [key: number]: IMonth;
 }
 interface YearProps {
   year: number;
-  months: YearModel;
+  months: IYear;
   onClickDay: (year: number, month: number, day: number) => void;
 }
-export const Year: React.FC<YearProps> = ({ year, months, onClickDay }) => {
+const Year: React.FC<YearProps> = ({ year, months, onClickDay }) => {
   const renderMonths: JSX.Element[] = [];
   for (let i = 0; i < 12; i++) {
     renderMonths.push(
@@ -24,3 +24,4 @@ export const Year: React.FC<YearProps> = ({ year, months, onClickDay }) => {
   }
   return <div className="year">{renderMonths}</div>;
 };
+export default Year;

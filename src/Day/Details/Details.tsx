@@ -1,22 +1,24 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FilledInput, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { DayModel, Moods } from '../Day';
+import { IDay, Moods } from '../Day';
 import './Details.css';
+const dateString = {
+  locale: 'en-US',
+  options: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
+};
 interface DayDetailsProps {
   date: Date;
-  onClose: (values?: DayModel) => void;
+  values: IDay;
+  onClose: (values?: IDay) => void;
 }
-const DayDetails: React.FC<DayDetailsProps> = ({ date, onClose }) => {
-  const dateString = {
-    locale: 'en-US',
-    options: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
-  };
-  const [values, setValues] = useState<DayModel>({});
-  const handleChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    setValues(oldValues => ({
-      ...oldValues,
-      [event.target.name as string]: event.target.value,
+const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
+  if (!values.mood) { values = { ...values, mood: 0 }; } 
+  const [inputData, setInputData] = useState<IDay>(values);
+  const handleChange = (event: React.ChangeEvent<{ name?: string; value: any }>) => {
+    setInputData(oldInputData => ({
+      ...oldInputData,
+      [event.target.name as string]: parseInt(event.target.value, 10),
     }));
   };
   const renderMoods: JSX.Element[] = [];
@@ -24,7 +26,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, onClose }) => {
     renderMoods.push(<MenuItem key={key} value={key}>{Moods[key].name}</MenuItem>);
   }
   const MoodPreview = styled.div`
-    background-color: ${Moods[values.mood || 0].color};
+    background-color: ${Moods[inputData.mood || 0].color};
   `;
   return (
     <Dialog open onClose={() => onClose()}>
@@ -37,7 +39,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, onClose }) => {
           <FormControl variant="filled" fullWidth>
             <InputLabel htmlFor="mood-select">Mood</InputLabel>
             <Select
-              value={values.mood || 0}
+              value={inputData.mood || 0}
               input={<FilledInput name="mood" id="mood-select" />}
               onChange={handleChange}
             >
@@ -47,7 +49,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, onClose }) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(values)} color="primary">Apply</Button>
+        <Button onClick={() => onClose(inputData)} color="primary">Apply</Button>
         <Button onClick={() => onClose()} color="primary">Close</Button>
       </DialogActions>
     </Dialog>
