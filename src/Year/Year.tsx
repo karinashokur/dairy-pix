@@ -1,6 +1,6 @@
 import React from 'react';
 import Month, { IMonth } from '../Month/Month';
-import './Year.css';
+import './Year.scss';
 export interface IYear {
   [key: number]: IMonth;
 }

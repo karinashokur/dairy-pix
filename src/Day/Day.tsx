@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import styled from 'styled-components';
 import { isNumber } from 'util';
-import './Day.css';
+import './Day.scss';
 export interface IDay {
   mood?: number;
 }

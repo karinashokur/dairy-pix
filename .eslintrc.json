@@ -28,6 +28,7 @@
   "globals": {
     "document": true,
     "localStorage": true,
+    "window": true,
     "it": true
   }
 }

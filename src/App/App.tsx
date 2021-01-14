@@ -1,31 +1,23 @@
-import { AppBar, IconButton, Toolbar, Tooltip, Typography } from '@material-ui/core';
-import { BarChart, CloudOff, ZoomIn } from '@material-ui/icons';
+import { AppBar, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@material-ui/core';
+import { BarChart, CloudUpload, MoreVert, Security, ZoomIn } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
-import { IDay, Moods } from '../Day/Day';
+import gitlabLogo from '../assets/gitlab.svg';
+import { IDay } from '../Day/Day';
 import DayDetails from '../Day/Details/Details';
+import generateRandomData from '../helper';
 import StorageHandler from '../Storage/StorageHandler';
 import Year, { IYear } from '../Year/Year';
-import './App.css';
-const generateRandomData = () => {
-  const data: IYear = {};
-  if (localStorage.getItem('randomData')) { 
-    for (let m = 0; m < 12; m++) {
-      data[m] = {};
-      for (let d = 1; d < 32; d++) {
-        data[m][d] = { mood: Math.floor(Math.random() * Moods.length) };
-      }
-    }
-  }
-  return data;
-};
+import './App.scss';
 interface AppProps {
   name: string;
+  repositoryUrl: string
 }
-const App: React.FC<AppProps> = ({ name }) => {
+const App: React.FC<AppProps> = ({ name, repositoryUrl }) => {
   const storage: StorageHandler = new StorageHandler();
   const currentYear = new Date().getFullYear();
   const [years, setYears] = useState<{[key: number]: IYear}>({ 2019: generateRandomData() });
   const [details, setDetails] = useState<{date: Date, values: IDay}>();
+  const [dotMenuAnchor, setDotMenuAnchor] = useState<HTMLElement | null>(null);
   const saveYear = (year: number): void => {
     if (years[year]) {
       storage.save(year.toString(), JSON.stringify(years[year]));
@@ -62,15 +54,43 @@ const App: React.FC<AppProps> = ({ name }) => {
       <AppBar className="appbar" position="static">
         <Toolbar variant="dense">
           <Typography variant="h6" color="inherit" className="appbar-title">{name}</Typography>
-          <Tooltip title="Zoom">
-            <IconButton color="inherit"><ZoomIn /></IconButton>
+          <Tooltip title="Save in Cloud">
+            <IconButton color="inherit"><CloudUpload /></IconButton>
           </Tooltip>
-          <Tooltip title="Statistics">
-            <IconButton color="inherit"><BarChart /></IconButton>
-          </Tooltip>
-          <Tooltip title="Cloud">
-            <IconButton color="inherit"><CloudOff /></IconButton>
-          </Tooltip>
+          <IconButton
+            color="inherit"
+            onClick={
+              (event: React.MouseEvent<HTMLButtonElement>) => setDotMenuAnchor(event.currentTarget)
+            }
+          >
+            <MoreVert />
+          </IconButton>
+          <Menu
+            className="dot-menu"
+            anchorEl={dotMenuAnchor}
+            keepMounted
+            open={Boolean(dotMenuAnchor)}
+            onClose={() => setDotMenuAnchor(null)}
+          >
+            <MenuItem>
+              <ZoomIn />
+              <span>Zoom</span>
+            </MenuItem>
+            <MenuItem>
+              <BarChart />
+              <span>Statistics</span>
+            </MenuItem>
+            <MenuItem>
+              <Security />
+              <span>Privacy</span>
+            </MenuItem>
+            <MenuItem onClick={() => window.open(repositoryUrl, '_blank')}>
+              <div className="gitlab-icon">
+                <img src={gitlabLogo} alt="Tanuki" />
+              </div>
+              <span>View on GitLab</span>
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <Year

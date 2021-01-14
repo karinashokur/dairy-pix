@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FilledInput,
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { IDay, Moods } from '../Day';
-import './Details.css';
+import './Details.scss';
 const dateString = {
   locale: 'en-US',
   options: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
