@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FilledInput, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FilledInput, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { IDay, Moods } from '../Day';
@@ -16,9 +16,16 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
   if (!values.mood) { values = { ...values, mood: 0 }; } 
   const [inputData, setInputData] = useState<IDay>(values);
   const handleChange = (event: React.ChangeEvent<{ name?: string; value: any }>) => {
+    let { name, value } = event.target; 
+    if (!name) { return; }
+    if (typeof inputData[name] === 'number') {
+      value = parseInt(value, 10);
+    } else {
+      value = value ? value.substr(0, 140) : undefined;
+    }
     setInputData(oldInputData => ({
       ...oldInputData,
-      [event.target.name as string]: parseInt(event.target.value, 10),
+      [name as string]: value,
     }));
   };
   const renderMoods: JSX.Element[] = [];
@@ -30,7 +37,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
   `;
   return (
     <Dialog open onClose={() => onClose()}>
-      <DialogTitle id="form-dialog-title">
+      <DialogTitle>
         {date.toLocaleDateString(dateString.locale, dateString.options)}
       </DialogTitle>
       <DialogContent>
@@ -47,6 +54,18 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
             </Select>
           </FormControl>
         </div>
+        <TextField
+          name="note"
+          label="Note"
+          multiline
+          rows="4"
+          fullWidth
+          margin="normal"
+          variant="filled"
+          value={inputData.note || ''}
+          helperText={`${(inputData.note || '').length}/140`}
+          onChange={handleChange}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(inputData)} color="primary">Apply</Button>

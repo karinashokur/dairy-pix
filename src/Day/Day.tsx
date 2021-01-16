@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import { isNumber } from 'util';
 import './Day.scss';
 export interface IDay {
+  [index: string]: unknown;
   mood?: number;
+  note?: string;
 }
 export const Moods: {color: string, name: string}[] = [
   { color: '#2196F3', name: 'Normal / Average' },
