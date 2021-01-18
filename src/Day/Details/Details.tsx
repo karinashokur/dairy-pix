@@ -63,7 +63,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
           margin="normal"
           variant="filled"
           value={inputData.note || ''}
-          helperText={`${(inputData.note || '').length}/140`}
+          helperText={`${(inputData.note || '').length} / 140`}
           onChange={handleChange}
         />
       </DialogContent>

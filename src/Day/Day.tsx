@@ -34,6 +34,10 @@ const Day: React.FC<DayProps> = ({ data, isFiller, onClick }) => {
   const Pixel = styled.div`
     background-color: ${isNumber(data.mood) ? Moods[data.mood].color : null}
   `;
-  return <Pixel className={classes} onClick={!isFiller ? onClick : undefined}></Pixel>;
+  return (
+    <Pixel className={classes} onClick={!isFiller ? onClick : undefined}>
+      {data.note && <span className="note-indicator"></span>}
+    </Pixel>
+  );
 };
 export default Day;
