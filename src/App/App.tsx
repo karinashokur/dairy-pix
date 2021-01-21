@@ -1,11 +1,11 @@
-import { AppBar, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@material-ui/core';
-import { BarChart, CloudUpload, MoreVert, Security, ZoomIn } from '@material-ui/icons';
+import { AppBar, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography, CircularProgress } from '@material-ui/core';
+import { BarChart, CloudUpload, MoreVert, Security, ZoomIn, CloudDone } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 import gitlabLogo from '../assets/gitlab.svg';
 import { IDay } from '../Day/Day';
 import DayDetails from '../Day/Details/Details';
 import generateRandomData from '../helper';
-import StorageHandler from '../Storage/StorageHandler';
+import StorageHandler, { SupportedClouds } from '../Storage/StorageHandler';
 import Year, { IYear } from '../Year/Year';
 import './App.scss';
 interface AppProps {
@@ -18,17 +18,25 @@ const App: React.FC<AppProps> = ({ name, repositoryUrl }) => {
   const [years, setYears] = useState<{[key: number]: IYear}>({ 2019: generateRandomData() });
   const [details, setDetails] = useState<{date: Date, values: IDay}>();
   const [dotMenuAnchor, setDotMenuAnchor] = useState<HTMLElement | null>(null);
-  const saveYear = (year: number): void => {
+  const [cloudLoading, setCloudLoading] = useState<boolean>(false);
+  const saveYear = async (year: number) => {
     if (years[year]) {
-      storage.save(year.toString(), JSON.stringify(years[year]));
+      setCloudLoading(true);
+      await storage.save(year.toString(), JSON.stringify(years[year])); 
+      setCloudLoading(false);
     }
   };
-  const loadYear = (year: number): void => {
+  const loadYear = async (year: number) => {
     const updatedYears = { ...years };
-    const data = storage.load(year.toString());
-    if (data) {
-      updatedYears[year] = JSON.parse(data); 
-      setYears(updatedYears);
+    try {
+      setCloudLoading(true);
+      const data = await storage.load(year.toString());
+      if (data) {
+        updatedYears[year] = JSON.parse(data); 
+        setYears(updatedYears);
+      }
+      setCloudLoading(false);
+    } catch (e) {
     }
   };
   const handleDayDetails = (values?: IDay): void => {
@@ -54,9 +62,15 @@ const App: React.FC<AppProps> = ({ name, repositoryUrl }) => {
       <AppBar className="appbar" position="static">
         <Toolbar variant="dense">
           <Typography variant="h6" color="inherit" className="appbar-title">{name}</Typography>
-          <Tooltip title="Save in Cloud">
-            <IconButton color="inherit"><CloudUpload /></IconButton>
-          </Tooltip>
+          {cloudLoading && <CircularProgress className="cloud-loading" color="secondary" size={24} />}
+          {!cloudLoading && !storage.connected() && (
+            <Tooltip title="Save in Cloud">
+              <IconButton color="inherit" onClick={() => storage.connectCloud(SupportedClouds.Dropbox)}><CloudUpload /></IconButton>
+            </Tooltip>
+          )}
+          {!cloudLoading && storage.connected() && (
+            <IconButton color="inherit"><CloudDone /></IconButton>
+          )}
           <IconButton
             color="inherit"
             onClick={
