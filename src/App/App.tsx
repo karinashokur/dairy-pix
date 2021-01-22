@@ -1,53 +1,62 @@
-import { AppBar, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography, CircularProgress } from '@material-ui/core';
-import { BarChart, CloudUpload, MoreVert, Security, ZoomIn, CloudDone } from '@material-ui/icons';
+import { AppBar, CircularProgress, IconButton, Toolbar, Tooltip, Typography } from '@material-ui/core';
+import { CloudDone, CloudUpload } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
-import gitlabLogo from '../assets/gitlab.svg';
 import { IDay } from '../Day/Day';
 import DayDetails from '../Day/Details/Details';
 import generateRandomData from '../helper';
 import StorageHandler, { SupportedClouds } from '../Storage/StorageHandler';
 import Year, { IYear } from '../Year/Year';
 import './App.scss';
+import AppMenu from './AppMenu/AppMenu';
 interface AppProps {
   name: string;
-  repositoryUrl: string
-}
-const App: React.FC<AppProps> = ({ name, repositoryUrl }) => {
-  const storage: StorageHandler = new StorageHandler();
-  const currentYear = new Date().getFullYear();
-  const [years, setYears] = useState<{[key: number]: IYear}>({ 2019: generateRandomData() });
-  const [details, setDetails] = useState<{date: Date, values: IDay}>();
-  const [dotMenuAnchor, setDotMenuAnchor] = useState<HTMLElement | null>(null);
-  const [cloudLoading, setCloudLoading] = useState<boolean>(false);
-  const saveYear = async (year: number) => {
-    if (years[year]) {
-      setCloudLoading(true);
-      await storage.save(year.toString(), JSON.stringify(years[year])); 
-      setCloudLoading(false);
-    }
+  repository: {
+    url: string,
+    name: string,
+    logoSrc: string,
   };
-  const loadYear = async (year: number) => {
+}
+const App: React.FC<AppProps> = ({ name, repository }) => {
+  const now = new Date().getFullYear();
+  const [years, setYears] = useState<{[key: number]: IYear}>({ [now]: generateRandomData() });
+  const [details, setDetails] = useState<{date: Date, values: IDay}>();
+  const [status, setStatus] = useState<{[key: string]: boolean}>({
+    loading: false, 
+    saving: false, 
+  });
+  const saveYear = async (year: number): Promise<void> => {
+    if (!years[year]) return;
+    try {
+      setStatus(oldStatus => ({ ...oldStatus, saving: true }));
+      await StorageHandler.save(year.toString(), JSON.stringify(years[year]));
+    } catch (e) {
+      console.error(`Failed to save year '${year}':`, e); 
+    }
+    setStatus(oldStatus => ({ ...oldStatus, saving: false }));
+  };
+  const loadYear = async (year: number): Promise<void> => {
     const updatedYears = { ...years };
     try {
-      setCloudLoading(true);
-      const data = await storage.load(year.toString());
+      setStatus(oldStatus => ({ ...oldStatus, loading: true }));
+      const data = await StorageHandler.load(year.toString());
       if (data) {
-        updatedYears[year] = JSON.parse(data); 
+        updatedYears[year] = JSON.parse(data);
         setYears(updatedYears);
       }
-      setCloudLoading(false);
     } catch (e) {
+      console.error(`Failed to load year '${year}':`, e); 
     }
+    setStatus(oldStatus => ({ ...oldStatus, loading: false }));
   };
-  const handleDayDetails = (values?: IDay): void => {
-    if (!details) { return; }
+  const handleDayDetailsClose = (values?: IDay): void => {
+    if (!details) return;
     if (values) {
       const year = details.date.getFullYear();
       const month = details.date.getMonth();
       const day = details.date.getDate();
       const newYears = { ...years };
-      if (!newYears[year]) { newYears[year] = {}; }
-      if (!newYears[year][month]) { newYears[year][month] = {}; }
+      if (!newYears[year]) newYears[year] = {};
+      if (!newYears[year][month]) newYears[year][month] = {};
       newYears[year][month][day] = values;
       setYears(newYears);
       saveYear(year);
@@ -55,70 +64,49 @@ const App: React.FC<AppProps> = ({ name, repositoryUrl }) => {
     setDetails(undefined);
   };
   useEffect(() => {
-    loadYear(new Date().getFullYear());
+    loadYear(now);
   }, []); 
   return (
-    <div className="diary">
+    <div className="app">
       <AppBar className="appbar" position="static">
         <Toolbar variant="dense">
-          <Typography variant="h6" color="inherit" className="appbar-title">{name}</Typography>
-          {cloudLoading && <CircularProgress className="cloud-loading" color="secondary" size={24} />}
-          {!cloudLoading && !storage.connected() && (
+          <Typography variant="h6" className="appbar-title">{name}</Typography>
+          {!StorageHandler.cloud && ( 
             <Tooltip title="Save in Cloud">
-              <IconButton color="inherit" onClick={() => storage.connectCloud(SupportedClouds.Dropbox)}><CloudUpload /></IconButton>
+              <IconButton
+                color="inherit"
+                onClick={() => StorageHandler.connectCloud(SupportedClouds.Dropbox)}
+              >
+                <CloudUpload />
+              </IconButton>
             </Tooltip>
           )}
-          {!cloudLoading && storage.connected() && (
+          {StorageHandler.cloud && !status.saving && ( 
             <IconButton color="inherit"><CloudDone /></IconButton>
           )}
-          <IconButton
-            color="inherit"
-            onClick={
-              (event: React.MouseEvent<HTMLButtonElement>) => setDotMenuAnchor(event.currentTarget)
-            }
-          >
-            <MoreVert />
-          </IconButton>
-          <Menu
-            className="dot-menu"
-            anchorEl={dotMenuAnchor}
-            keepMounted
-            open={Boolean(dotMenuAnchor)}
-            onClose={() => setDotMenuAnchor(null)}
-          >
-            <MenuItem>
-              <ZoomIn />
-              <span>Zoom</span>
-            </MenuItem>
-            <MenuItem>
-              <BarChart />
-              <span>Statistics</span>
-            </MenuItem>
-            <MenuItem>
-              <Security />
-              <span>Privacy</span>
-            </MenuItem>
-            <MenuItem onClick={() => window.open(repositoryUrl, '_blank')}>
-              <div className="gitlab-icon">
-                <img src={gitlabLogo} alt="Tanuki" />
-              </div>
-              <span>View on GitLab</span>
-            </MenuItem>
-          </Menu>
+          {status.saving && ( 
+            <CircularProgress className="cloud-saving" color="secondary" size={24} />
+          )}
+          <AppMenu repository={repository} />
         </Toolbar>
       </AppBar>
-      <Year
-        key={currentYear}
-        year={currentYear}
-        months={years[currentYear] ? years[currentYear] : {}}
-        onClickDay={(year, month, day) => setDetails({
-          date: new Date(year, month, day),
-          values: years[year][month] && years[year][month][day] ? years[year][month][day] : {},
-        })}
-      />
-      {details
-        && <DayDetails date={details.date} values={details.values} onClose={handleDayDetails} />
-      }
+      {status.loading && ( 
+        <div className="app-loading"><CircularProgress color="secondary" size={100} /></div>
+      )}
+      {!status.loading && (
+        <Year
+          key={now}
+          year={now}
+          months={years[now] ? years[now] : {}}
+          onClickDay={(year, month, day) => setDetails({
+            date: new Date(year, month, day),
+            values: years[year][month] && years[year][month][day] ? years[year][month][day] : {},
+          })}
+        />
+      )}
+      {details && ( 
+        <DayDetails date={details.date} values={details.values} onClose={handleDayDetailsClose} />
+      )}
     </div>
   );
 };

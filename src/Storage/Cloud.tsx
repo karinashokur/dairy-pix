@@ -1,5 +1,6 @@
-export default interface Cloud {
-  save: (key: string, value: string) => Promise<void>;
-  load: (key: string) => Promise<string | null>;
-  disconnect?: () => Promise<void>;
+export default abstract class Cloud {
+  abstract init: () => void;
+  abstract save: (filename: string, value: string) => Promise<void>;
+  abstract load: (filename: string) => Promise<string | null>;
+  abstract disconnect: () => Promise<void>;
 }

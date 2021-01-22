@@ -21,6 +21,7 @@
     "react-hooks/exhaustive-deps": "warn",
     "jsx-a11y/click-events-have-key-events": "off",
     "linebreak-style": "off",
+    "no-console": "off",
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "object-curly-newline": "off",
     "lines-between-class-members": "off"
@@ -30,6 +31,7 @@
     "FileReader": true,
     "localStorage": true,
     "window": true,
+    "fetch": true,
     "it": true
   }
 }

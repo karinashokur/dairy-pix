@@ -1,17 +1,15 @@
+.app {
+  height: inherit;
+}
 .appbar-title {
   flex-grow: 1;
 }
-.dot-menu span {
-  padding-left: 8px;
-}
-.gitlab-icon {
-  text-align: center;
-  width: 24px;
-  height: 24px;
-  img {
-    width: 22px;
-  }
-}
-.cloud-loading {
+.cloud-saving {
   margin: 12px;
+}
+.app-loading {
+  position: relative;
+  top: calc(50% - 100px);
+  left: calc(50% - 50px);
+  width: fit-content;
 }

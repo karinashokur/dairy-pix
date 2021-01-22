@@ -3,34 +3,55 @@ import CloudDropbox from './CloudDropbox';
 export enum SupportedClouds {
   Dropbox
 }
-export default class StorageHandler {
-  private cloud: Cloud | false = false;
+export class LocalStorageError extends Error {
   constructor() {
+    super();
+    Object.setPrototypeOf(this, LocalStorageError.prototype);
+  }
+}
+export default abstract class StorageHandler {
+  static initialized = false;
+  static cloud: Cloud | false = false;
+  static init(): void {
+    if (this.initialized) return;
     const variant = localStorage.getItem('storage');
     if (variant) {
       this.connectCloud(parseInt(variant, 10));
     }
   }
-  async save(key: string, value: string): Promise<void> {
+  static async save(key: string, value: string): Promise<void> {
+    if (!this.initialized) this.init();
     if (this.cloud) {
       await this.cloud.save(key, value); return;
     }
-    localStorage.setItem(key, value);
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      throw new LocalStorageError();
+    }
   }
-  async load(key: string): Promise<string | null> {
+  static async load(key: string): Promise<string | null> {
+    if (!this.initialized) this.init();
     if (this.cloud) {
       return this.cloud.load(key);
     }
     return localStorage.getItem(key);
   }
-  connectCloud(variant: SupportedClouds): void {
+  static connectCloud(variant: SupportedClouds): void {
+    if (this.cloud) return;
     switch (variant) {
-      case SupportedClouds.Dropbox: this.cloud = new CloudDropbox(); break;
+      case SupportedClouds.Dropbox: this.cloud = CloudDropbox; break;
       default: break;
     }
-    localStorage.setItem('storage', variant.toString());
+    if (this.cloud) {
+      this.cloud.init();
+      localStorage.setItem('storage', variant.toString());
+    }
   }
-  connected(): boolean {
-    return this.cloud !== false;
+  static disconnectCloud(): void {
+    if (!this.cloud) return;
+    this.cloud.disconnect();
+    this.cloud = false;
+    localStorage.removeItem('storage');
   }
 }

@@ -7,21 +7,23 @@ const dateString = {
   locale: 'en-US',
   options: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
 };
+const maxNoteLength = 140;
 interface DayDetailsProps {
   date: Date;
   values: IDay;
   onClose: (values?: IDay) => void;
 }
 const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
-  if (!values.mood) { values = { ...values, mood: 0 }; } 
+  if (!values.mood) values = { ...values, mood: 0 }; 
   const [inputData, setInputData] = useState<IDay>(values);
   const handleChange = (event: React.ChangeEvent<{ name?: string; value: any }>) => {
-    let { name, value } = event.target; 
-    if (!name) { return; }
-    if (typeof inputData[name] === 'number') {
+    const { name } = event.target;
+    if (!name) return;
+    let { value } = event.target;
+    if (typeof inputData[name] === 'number') { 
       value = parseInt(value, 10);
     } else {
-      value = value ? value.substr(0, 140) : undefined;
+      value = value ? value.substr(0, maxNoteLength) : undefined;
     }
     setInputData(oldInputData => ({
       ...oldInputData,
@@ -37,18 +39,16 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
   `;
   return (
     <Dialog open onClose={() => onClose()}>
-      <DialogTitle>
-        {date.toLocaleDateString(dateString.locale, dateString.options)}
-      </DialogTitle>
+      <DialogTitle>{date.toLocaleDateString(dateString.locale, dateString.options)}</DialogTitle>
       <DialogContent>
-        <div className="mood">
-          <MoodPreview></MoodPreview>
+        <div className="mood-selection">
+          <MoodPreview />
           <FormControl variant="filled" fullWidth>
             <InputLabel htmlFor="mood-select">Mood</InputLabel>
             <Select
               value={inputData.mood || 0}
-              input={<FilledInput name="mood" id="mood-select" />}
               onChange={handleChange}
+              input={<FilledInput name="mood" id="mood-select" />}
             >
               {renderMoods}
             </Select>
@@ -63,8 +63,8 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
           margin="normal"
           variant="filled"
           value={inputData.note || ''}
-          helperText={`${(inputData.note || '').length} / 140`}
           onChange={handleChange}
+          helperText={`${(inputData.note || '').length} / ${maxNoteLength}`}
         />
       </DialogContent>
       <DialogActions>
