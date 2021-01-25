@@ -4,12 +4,21 @@
 .appbar-title {
   flex-grow: 1;
 }
-.cloud-saving {
-  margin: 12px;
+.cloud-btn {
+  .cloud-saving {
+    margin: 12px;
+  }
 }
-.app-loading {
+.placeholder {
   position: relative;
   top: calc(50% - 100px);
-  left: calc(50% - 50px);
-  width: fit-content;
+  width: 100%;
+  text-align: center;
+  color: #D32F2F;
+  svg {
+    font-size: 6.3rem;
+  }
+  p {
+    margin: 0;
+  }
 }

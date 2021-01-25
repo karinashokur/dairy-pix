@@ -1,5 +1,6 @@
 import { Dropbox } from 'dropbox';
 import queryString from 'query-string';
+import { isString } from 'util';
 import Cloud from './Cloud';
 export default abstract class CloudDropbox extends Cloud {
   static api = new Dropbox({ clientId: 'h27trbgu4io3fg8', fetch });
@@ -31,12 +32,17 @@ export default abstract class CloudDropbox extends Cloud {
   }
   static async load(filename: string): Promise<string | null> {
     if (!this.token) this.init();
-    const response = await CloudDropbox.api.filesDownload({ path: `/${filename}` });
-    const reader = new FileReader();
-    return new Promise(resolve => {
-      reader.onload = () => resolve(reader.result as string);
-      reader.readAsText((response as any).fileBlob);
-    });
+    try {
+      const response = await CloudDropbox.api.filesDownload({ path: `/${filename}` });
+      const reader = new FileReader();
+      return new Promise(resolve => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsText((response as any).fileBlob);
+      });
+    } catch (e) {
+      if (isString(e.error) && e.error.includes('path/not_found')) return null;
+      throw e;
+    }
   }
   static async disconnect(): Promise<void> {
     if (!this.token) return;

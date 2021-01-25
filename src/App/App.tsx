@@ -1,5 +1,6 @@
 import { AppBar, CircularProgress, IconButton, Toolbar, Tooltip, Typography } from '@material-ui/core';
-import { CloudDone, CloudUpload } from '@material-ui/icons';
+import { CloudDone, CloudUpload, Warning } from '@material-ui/icons';
+import { withSnackbar, WithSnackbarProps } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { IDay } from '../Day/Day';
 import DayDetails from '../Day/Details/Details';
@@ -16,37 +17,45 @@ interface AppProps {
     logoSrc: string,
   };
 }
-const App: React.FC<AppProps> = ({ name, repository }) => {
+const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueueSnackbar }) => {
   const now = new Date().getFullYear();
   const [years, setYears] = useState<{[key: number]: IYear}>({ [now]: generateRandomData() });
   const [details, setDetails] = useState<{date: Date, values: IDay}>();
-  const [status, setStatus] = useState<{[key: string]: boolean}>({
+  const [status, setStatus] = useState<{[key: string]: boolean | 'error'}>({
     loading: false, 
     saving: false, 
   });
+  const updateStatus = (key: string, value: boolean | 'error'): void => {
+    setStatus(oldStatus => ({ ...oldStatus, [key]: value }));
+  };
   const saveYear = async (year: number): Promise<void> => {
     if (!years[year]) return;
     try {
-      setStatus(oldStatus => ({ ...oldStatus, saving: true }));
+      updateStatus('saving', true);
       await StorageHandler.save(year.toString(), JSON.stringify(years[year]));
     } catch (e) {
-      console.error(`Failed to save year '${year}':`, e); 
+      console.error(`Failed to save year '${year}':`, e);
+      enqueueSnackbar('Something went wrong while saving your diary!', {
+        variant: 'error',
+        anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
+      });
     }
-    setStatus(oldStatus => ({ ...oldStatus, saving: false }));
+    updateStatus('saving', false);
   };
   const loadYear = async (year: number): Promise<void> => {
     const updatedYears = { ...years };
     try {
-      setStatus(oldStatus => ({ ...oldStatus, loading: true }));
+      updateStatus('loading', true);
       const data = await StorageHandler.load(year.toString());
       if (data) {
         updatedYears[year] = JSON.parse(data);
         setYears(updatedYears);
       }
+      updateStatus('loading', false);
     } catch (e) {
-      console.error(`Failed to load year '${year}':`, e); 
+      console.error(`Failed to load year '${year}':`, e);
+      updateStatus('loading', 'error');
     }
-    setStatus(oldStatus => ({ ...oldStatus, loading: false }));
   };
   const handleDayDetailsClose = (values?: IDay): void => {
     if (!details) return;
@@ -71,28 +80,27 @@ const App: React.FC<AppProps> = ({ name, repository }) => {
       <AppBar className="appbar" position="static">
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
-          {!StorageHandler.cloud && ( 
-            <Tooltip title="Save in Cloud">
-              <IconButton
-                color="inherit"
-                onClick={() => StorageHandler.connectCloud(SupportedClouds.Dropbox)}
-              >
-                <CloudUpload />
-              </IconButton>
-            </Tooltip>
-          )}
-          {StorageHandler.cloud && !status.saving && ( 
-            <IconButton color="inherit"><CloudDone /></IconButton>
-          )}
-          {status.saving && ( 
-            <CircularProgress className="cloud-saving" color="secondary" size={24} />
-          )}
+          <div className="cloud-btn">
+            {!StorageHandler.cloud && ( 
+              <Tooltip title="Save in Cloud">
+                <IconButton
+                  color="inherit"
+                  onClick={() => StorageHandler.connectCloud(SupportedClouds.Dropbox)}
+                >
+                  <CloudUpload />
+                </IconButton>
+              </Tooltip>
+            )}
+            {StorageHandler.cloud && !status.saving && ( 
+              <IconButton color="inherit"><CloudDone /></IconButton>
+            )}
+            {status.saving && ( 
+              <CircularProgress className="cloud-saving" color="secondary" size={24} />
+            )}
+          </div>
           <AppMenu repository={repository} />
         </Toolbar>
       </AppBar>
-      {status.loading && ( 
-        <div className="app-loading"><CircularProgress color="secondary" size={100} /></div>
-      )}
       {!status.loading && (
         <Year
           key={now}
@@ -107,7 +115,16 @@ const App: React.FC<AppProps> = ({ name, repository }) => {
       {details && ( 
         <DayDetails date={details.date} values={details.values} onClose={handleDayDetailsClose} />
       )}
+      {status.loading === true && ( 
+        <div className="placeholder"><CircularProgress color="secondary" size={100} /></div>
+      )}
+      {status.loading === 'error' && ( 
+        <div className="placeholder">
+          <Warning />
+          <p>Something went wrong while loading your diary!</p>
+        </div>
+      )}
     </div>
   );
 };
-export default App;
+export default withSnackbar(App);
