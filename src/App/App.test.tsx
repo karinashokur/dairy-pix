@@ -1,18 +1,21 @@
+import { SnackbarProvider } from 'notistack';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
 import gitlabLogo from '../assets/gitlab.svg';
+import App from './App';
 it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
-    <App
-      name="Test App"
-      repository={{
-        name: 'GitLab',
-        url: 'https:
-        logoSrc: gitlabLogo,
-      }}
-    />,
+    <SnackbarProvider maxSnack={1}>
+      <App
+        name="Pixel Diary"
+        repository={{
+          name: 'GitLab',
+          url: 'https:
+          logoSrc: gitlabLogo,
+        }}
+      />
+    </SnackbarProvider>,
     div,
   );
   ReactDOM.unmountComponentAtNode(div);
