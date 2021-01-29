@@ -24,6 +24,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
   const [status, setStatus] = useState<{[key: string]: boolean | 'error'}>({
     loading: false, 
     saving: false, 
+    cloud: false, 
   });
   const updateStatus = (key: string, value: boolean | 'error'): void => {
     setStatus(oldStatus => ({ ...oldStatus, [key]: value }));
@@ -73,6 +74,8 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
     setDetails(undefined);
   };
   useEffect(() => {
+    StorageHandler.init();
+    updateStatus('cloud', StorageHandler.cloud !== false);
     loadYear(now);
   }, []); 
   return (
@@ -81,18 +84,31 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
           <div className="cloud-btn">
-            {!StorageHandler.cloud && ( 
+            {!status.cloud && ( 
               <Tooltip title="Save in Cloud">
                 <IconButton
                   color="inherit"
-                  onClick={() => StorageHandler.connectCloud(SupportedClouds.Dropbox)}
+                  onClick={() => {
+                    StorageHandler.connectCloud(SupportedClouds.Dropbox);
+                    updateStatus('cloud', true);
+                  }}
                 >
                   <CloudUpload />
                 </IconButton>
               </Tooltip>
             )}
-            {StorageHandler.cloud && !status.saving && ( 
-              <IconButton color="inherit"><CloudDone /></IconButton>
+            {status.cloud && !status.saving && ( 
+              <Tooltip title="Disconnect Cloud">
+                <IconButton
+                  color="inherit"
+                  onClick={() => {
+                    StorageHandler.disconnectCloud();
+                    updateStatus('cloud', false);
+                  }}
+                >
+                  <CloudDone />
+                </IconButton>
+              </Tooltip>
             )}
             {status.saving && ( 
               <CircularProgress className="cloud-saving" color="secondary" size={24} />

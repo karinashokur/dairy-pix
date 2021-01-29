@@ -5,7 +5,7 @@ import { IDay, Moods } from '../Day';
 import './Details.scss';
 const dateString = {
   locale: 'en-US',
-  options: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
+  options: { weekday: 'long', month: 'long', day: 'numeric' },
 };
 const maxNoteLength = 140;
 interface DayDetailsProps {
