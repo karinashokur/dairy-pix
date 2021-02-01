@@ -1,3 +1,4 @@
+import { isArray } from 'util';
 import Cloud from './Cloud';
 import CloudDropbox from './CloudDropbox';
 export enum SupportedClouds {
@@ -12,15 +13,23 @@ export class LocalStorageError extends Error {
 export default abstract class StorageHandler {
   static initialized = false;
   static cloud: Cloud | false = false;
+  static index: string[] = [];
   static init(): void {
     if (this.initialized) return;
+    const serializedIndex = localStorage.getItem('storageIndex');
+    if (serializedIndex) {
+      const parsedIndex = JSON.parse(serializedIndex);
+      this.index = isArray(parsedIndex) ? parsedIndex : [];
+    }
     const variant = localStorage.getItem('storage');
     if (variant) {
       this.connectCloud(parseInt(variant, 10));
     }
+    this.initialized = true;
   }
   static async save(key: string, value: string): Promise<void> {
     if (!this.initialized) this.init();
+    this.updateIndex(key);
     if (this.cloud) {
       await this.cloud.save(key, value); return;
     }
@@ -37,6 +46,11 @@ export default abstract class StorageHandler {
     }
     return localStorage.getItem(key);
   }
+  static updateIndex(key: string): void {
+    if (this.cloud || this.index.includes(key)) return;
+    this.index.push(key);
+    this.save('storageIndex', JSON.stringify(this.index));
+  }
   static connectCloud(variant: SupportedClouds): void {
     if (this.cloud) return;
     switch (variant) {
@@ -47,6 +61,26 @@ export default abstract class StorageHandler {
       this.cloud.init();
       localStorage.setItem('storage', variant.toString());
     }
+  }
+  static async transferToCloud(): Promise<void> {
+    if (!this.cloud || !this.index.length) return;
+    if (await this.cloud.isPopulated()) {
+      console.warn('ABORTED TRANSFER: Cloud storage already contains diary data!');
+      return;
+    }
+    const requests: Promise<void>[] = [];
+    for (const key of this.index) { 
+      const value = localStorage.getItem(key);
+      if (value) {
+        requests.push(this.save(key, value));
+      }
+    }
+    await Promise.all(requests);
+    for (const key of this.index) { 
+      localStorage.removeItem(key);
+    }
+    localStorage.removeItem('storageIndex');
+    this.index = [];
   }
   static disconnectCloud(): void {
     if (!this.cloud) return;

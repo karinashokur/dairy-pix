@@ -44,6 +44,12 @@ export default abstract class CloudDropbox extends Cloud {
       throw e;
     }
   }
+  static async isPopulated(): Promise<boolean> {
+    if (!this.token) this.init();
+    const folder = await CloudDropbox.api.filesListFolder({ path: '' });
+    if (folder.entries.length > 0) return true;
+    return false;
+  }
   static async disconnect(): Promise<void> {
     if (!this.token) return;
     await this.api.authTokenRevoke();

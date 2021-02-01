@@ -14,11 +14,14 @@
   top: calc(50% - 100px);
   width: 100%;
   text-align: center;
-  color: #D32F2F;
+  color: white;
   svg {
     font-size: 6.3rem;
   }
   p {
     margin: 0;
+  }
+  &.error {
+    color: #D32F2F;
   }
 }

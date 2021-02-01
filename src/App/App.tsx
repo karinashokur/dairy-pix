@@ -22,9 +22,10 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
   const [years, setYears] = useState<{[key: number]: IYear}>({ [now]: generateRandomData() });
   const [details, setDetails] = useState<{date: Date, values: IDay}>();
   const [status, setStatus] = useState<{[key: string]: boolean | 'error'}>({
-    loading: false, 
+    loading: true, 
     saving: false, 
     cloud: false, 
+    transferring: false, 
   });
   const updateStatus = (key: string, value: boolean | 'error'): void => {
     setStatus(oldStatus => ({ ...oldStatus, [key]: value }));
@@ -76,7 +77,12 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
   useEffect(() => {
     StorageHandler.init();
     updateStatus('cloud', StorageHandler.cloud !== false);
-    loadYear(now);
+    (async () => {
+      updateStatus('transferring', true);
+      await StorageHandler.transferToCloud();
+      updateStatus('transferring', false);
+      loadYear(now);
+    })();
   }, []); 
   return (
     <div className="app">
@@ -132,10 +138,13 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
         <DayDetails date={details.date} values={details.values} onClose={handleDayDetailsClose} />
       )}
       {status.loading === true && ( 
-        <div className="placeholder"><CircularProgress color="secondary" size={100} /></div>
+        <div className="placeholder">
+          <CircularProgress color="secondary" size={100} />
+          { status.transferring && <p>Transferring data to your cloud</p> }
+        </div>
       )}
       {status.loading === 'error' && ( 
-        <div className="placeholder">
+        <div className="placeholder error">
           <Warning />
           <p>Something went wrong while loading your diary!</p>
         </div>
