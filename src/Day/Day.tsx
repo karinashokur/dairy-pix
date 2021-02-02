@@ -32,7 +32,7 @@ const Day: React.FC<DayProps> = ({ data, isFiller, onClick }) => {
     filler: isFiller,
   });
   const Pixel = styled.div`
-    background-color: ${isNumber(data.mood) ? Moods[data.mood].color : null}
+    background-color: ${isNumber(data.mood) ? Moods[data.mood].color : null};
   `;
   return (
     <Pixel className={classes} onClick={!isFiller ? onClick : undefined}>

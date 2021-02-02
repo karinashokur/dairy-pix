@@ -30,10 +30,6 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
       [name as string]: value,
     }));
   };
-  const renderMoods: JSX.Element[] = [];
-  for (const key in Moods) { 
-    renderMoods.push(<MenuItem key={key} value={key}>{Moods[key].name}</MenuItem>);
-  }
   const MoodPreview = styled.div`
     background-color: ${Moods[inputData.mood || 0].color};
   `;
@@ -50,7 +46,9 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
               onChange={handleChange}
               input={<FilledInput name="mood" id="mood-select" />}
             >
-              {renderMoods}
+              {
+                Moods.map((x, i) => <MenuItem key={i} value={i}>{x.name}</MenuItem>)
+              }
             </Select>
           </FormControl>
         </div>
