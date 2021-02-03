@@ -1,24 +1,18 @@
 import React from 'react';
-import Month, { IMonth } from '../Month/Month';
+import Month from '../Month/Month';
 import './Year.scss';
-export interface IYear {
-  [key: number]: IMonth;
-}
 interface YearProps {
   year: number;
-  months: IYear;
-  onClickDay: (year: number, month: number, day: number) => void;
+  onDayUpdated: () => void;
 }
-const Year: React.FC<YearProps> = ({ year, months, onClickDay }) => {
+const Year: React.FC<YearProps> = ({ year, onDayUpdated }) => {
   const renderMonths: JSX.Element[] = [];
   for (let i = 0; i < 12; i++) {
     renderMonths.push(
       <Month
         key={`${year}-${i}`}
-        month={i}
-        year={year}
-        days={months[i] ? months[i] : {}}
-        onClickDay={day => onClickDay(year, i, day)}
+        date={new Date(year, i)}
+        onDayUpdated={onDayUpdated}
       />,
     );
   }

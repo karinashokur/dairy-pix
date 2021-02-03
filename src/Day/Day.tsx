@@ -1,32 +1,20 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { isNumber } from 'util';
+import StorageHandlerYear from '../Storage/StorageHandlerYear';
 import './Day.scss';
-export interface IDay {
-  [index: string]: unknown;
-  mood?: number;
-  note?: string;
-}
-export const Moods: {color: string, name: string}[] = [
-  { color: '#2196F3', name: 'Normal / Average' },
-  { color: '#26C6DA', name: 'Good / Happy' },
-  { color: '#FFEB3B', name: 'Fantastic / Amazing' },
-  { color: '#F48FB1', name: 'Relaxed' },
-  { color: '#ff9800', name: 'Stressed / Frantic' },
-  { color: '#f44336', name: 'Frustrated / Angry' },
-  { color: '#9E9E9E', name: 'Depressed / Sad' },
-  { color: '#26A69A', name: 'Exhausted / Tired' },
-  { color: '#9CCC65', name: 'Sick' },
-  { color: '#9c27b0', name: 'Grieving' },
-  { color: '#795548', name: 'Mood Swings' },
-];
+import DayDetails from './Details/Details';
+import IDay from '../types/day';
+import Moods from '../types/moods';
 interface DayProps {
-  data: IDay;
+  date: Date;
   isFiller: boolean;
-  onClick: () => void;
+  onUpdate: () => void;
 }
-const Day: React.FC<DayProps> = ({ data, isFiller, onClick }) => {
+const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
+  const [data, setData] = useState<IDay>(StorageHandlerYear.getDay(date) || {});
+  const [showDetails, setShowDetails] = useState<boolean>(false);
   const classes = classNames({
     day: true,
     filler: isFiller,
@@ -34,10 +22,22 @@ const Day: React.FC<DayProps> = ({ data, isFiller, onClick }) => {
   const Pixel = styled.div`
     background-color: ${isNumber(data.mood) ? Moods[data.mood].color : null};
   `;
+  const handleDetailsClose = (values?: IDay): void => {
+    setShowDetails(false);
+    if (!values) return;
+    setData(values);
+    StorageHandlerYear.setDay(date, values);
+    onUpdate();
+  };
   return (
-    <Pixel className={classes} onClick={!isFiller ? onClick : undefined}>
-      {data.note && <span className="note-indicator"></span>}
-    </Pixel>
+    <React.Fragment>
+      <Pixel className={classes} onClick={!isFiller ? () => setShowDetails(true) : undefined}>
+        {data.note && <span className="note-indicator"></span>}
+      </Pixel>
+      {showDetails && ( 
+        <DayDetails date={date} values={data} onClose={handleDetailsClose} />
+      )}
+    </React.Fragment>
   );
 };
 export default Day;

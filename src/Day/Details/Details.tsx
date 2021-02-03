@@ -1,7 +1,8 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FilledInput, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { IDay, Moods } from '../Day';
+import IDay from '../../types/day';
+import Moods from '../../types/moods';
 import './Details.scss';
 const dateString = {
   locale: 'en-US',
