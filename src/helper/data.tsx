@@ -1,5 +1,5 @@
-import Moods from './types/moods';
-import IYear from './types/year';
+import Moods from '../types/moods';
+import IYear from '../types/year';
 const generateRandomData = () => {
   const data: IYear = {};
   if (localStorage.getItem('randomData')) { 

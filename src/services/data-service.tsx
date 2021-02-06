@@ -1,7 +1,7 @@
-import StorageHandler from './StorageHandler';
-import IYear from '../types/year';
+import StorageHandler from '../storage/storage-handler';
 import IDay from '../types/day';
-export default abstract class StorageHandlerYear {
+import IYear from '../types/year';
+export default abstract class DataService {
   static data: {[key: number]: IYear} = [];
   static async loadYear(year: number): Promise<void> { 
     if (this.data[year]) return;

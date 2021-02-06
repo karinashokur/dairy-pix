@@ -1,8 +1,8 @@
 import { Dropbox } from 'dropbox';
 import queryString from 'query-string';
 import { isString } from 'util';
-import Cloud from './Cloud';
-export default abstract class CloudDropbox extends Cloud {
+import CloudStorage from '../types/cloud-storage';
+export default abstract class CloudDropbox extends CloudStorage {
   static api = new Dropbox({ clientId: 'h27trbgu4io3fg8', fetch });
   static token: string | null = null;
   static appUrl = window.location.origin + window.location.pathname;

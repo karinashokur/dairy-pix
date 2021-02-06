@@ -1,6 +1,6 @@
 import React from 'react';
-import Day from '../Day/Day';
-import './Month.scss';
+import Day from '../day/day';
+import './month.scss';
 interface MonthProps {
   date: Date;
   onDayUpdated: () => void;

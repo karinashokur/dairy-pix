@@ -1,6 +1,6 @@
 import { isArray } from 'util';
-import Cloud from './Cloud';
-import CloudDropbox from './CloudDropbox';
+import CloudStorage from '../types/cloud-storage';
+import CloudDropbox from './cloud-dropbox';
 export enum SupportedClouds {
   Dropbox
 }
@@ -12,7 +12,7 @@ export class LocalStorageError extends Error {
 }
 export default abstract class StorageHandler {
   static initialized = false;
-  static cloud: Cloud | false = false;
+  static cloud: CloudStorage | false = false;
   static index: string[] = [];
   static init(): void {
     if (this.initialized) return;

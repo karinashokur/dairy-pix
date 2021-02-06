@@ -2,11 +2,11 @@ import { AppBar, CircularProgress, IconButton, Toolbar, Tooltip, Typography } fr
 import { CloudDone, CloudUpload, Warning } from '@material-ui/icons';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import StorageHandler, { SupportedClouds } from '../Storage/StorageHandler';
-import StorageHandlerYear from '../Storage/StorageHandlerYear';
-import Year from '../Year/Year';
-import './App.scss';
-import AppMenu from './AppMenu/AppMenu';
+import DataService from '../../services/data-service';
+import StorageHandler, { SupportedClouds } from '../../storage/storage-handler';
+import Year from '../year/year';
+import './app.scss';
+import AppMenu from './menu/app-menu';
 interface AppProps {
   name: string;
   repository: {
@@ -29,7 +29,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
   const saveYear = async (year: number): Promise<void> => {
     try {
       updateStatus('saving', true);
-      await StorageHandlerYear.saveYear(year);
+      await DataService.saveYear(year);
     } catch (e) {
       console.error(`Failed to save year '${year}':`, e);
       enqueueSnackbar('Something went wrong while saving your diary!', {
@@ -42,7 +42,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
   const loadYear = async (year: number): Promise<void> => {
     try {
       updateStatus('loading', true);
-      await StorageHandlerYear.loadYear(year);
+      await DataService.loadYear(year);
       updateStatus('loading', false);
     } catch (e) {
       console.error(`Failed to load year '${year}':`, e);

@@ -1,9 +1,9 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FilledInput, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import IDay from '../../types/day';
-import Moods from '../../types/moods';
-import './Details.scss';
+import IDay from '../../../types/day';
+import Moods from '../../../types/moods';
+import './details.scss';
 const dateString = {
   locale: 'en-US',
   options: { weekday: 'long', month: 'long', day: 'numeric' },

@@ -1,4 +1,4 @@
-export default abstract class Cloud {
+export default abstract class CloudStorage {
   abstract init: () => void;
   abstract save: (filename: string, value: string) => Promise<void>;
   abstract load: (filename: string) => Promise<string | null>;

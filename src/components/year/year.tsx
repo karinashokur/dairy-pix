@@ -1,6 +1,6 @@
 import React from 'react';
-import Month from '../Month/Month';
-import './Year.scss';
+import Month from '../month/month';
+import './year.scss';
 interface YearProps {
   year: number;
   onDayUpdated: () => void;

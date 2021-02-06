@@ -1,7 +1,7 @@
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { BarChart, MoreVert, Security, ZoomIn } from '@material-ui/icons';
 import React, { useState } from 'react';
-import './AppMenu.scss';
+import './app-menu.scss';
 interface AppMenuProps {
   repository: {
     url: string,

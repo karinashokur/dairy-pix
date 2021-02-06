@@ -2,18 +2,18 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { isNumber } from 'util';
-import StorageHandlerYear from '../Storage/StorageHandlerYear';
-import './Day.scss';
-import DayDetails from './Details/Details';
-import IDay from '../types/day';
-import Moods from '../types/moods';
+import DataService from '../../services/data-service';
+import IDay from '../../types/day';
+import Moods from '../../types/moods';
+import './day.scss';
+import DayDetails from './details/details';
 interface DayProps {
   date: Date;
   isFiller: boolean;
   onUpdate: () => void;
 }
 const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
-  const [data, setData] = useState<IDay>(StorageHandlerYear.getDay(date) || {});
+  const [data, setData] = useState<IDay>(DataService.getDay(date) || {});
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const classes = classNames({
     day: true,
@@ -26,7 +26,7 @@ const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
     setShowDetails(false);
     if (!values) return;
     setData(values);
-    StorageHandlerYear.setDay(date, values);
+    DataService.setDay(date, values);
     onUpdate();
   };
   return (

@@ -1,8 +1,8 @@
 import { SnackbarProvider } from 'notistack';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import gitlabLogo from '../assets/gitlab.svg';
-import App from './App';
+import gitlabLogo from '../../assets/gitlab.svg';
+import App from './app';
 it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
