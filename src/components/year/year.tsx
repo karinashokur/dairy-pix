@@ -3,7 +3,7 @@ import Month from '../month/month';
 import './year.scss';
 interface YearProps {
   year: number;
-  onDayUpdated: () => void;
+  onDayUpdated: (year: number) => void;
 }
 const Year: React.FC<YearProps> = ({ year, onDayUpdated }) => {
   const renderMonths: JSX.Element[] = [];
@@ -12,7 +12,7 @@ const Year: React.FC<YearProps> = ({ year, onDayUpdated }) => {
       <Month
         key={`${year}-${i}`}
         date={new Date(year, i)}
-        onDayUpdated={onDayUpdated}
+        onDayUpdated={() => onDayUpdated(year)}
       />,
     );
   }

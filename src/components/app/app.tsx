@@ -102,7 +102,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
         <Year
           key={now}
           year={now}
-          onDayUpdated={() => saveYear(now)}
+          onDayUpdated={year => saveYear(year)}
         />
       )}
       {status.loading === true && ( 

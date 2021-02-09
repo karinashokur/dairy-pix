@@ -1,10 +1,15 @@
 import StorageHandler from '../storage/storage-handler';
 import IDay from '../types/day';
 import IYear from '../types/year';
+import generateRandomData from '../helper/data';
 export default abstract class DataService {
   static data: {[key: number]: IYear} = [];
-  static async loadYear(year: number): Promise<void> { 
+  static async loadYear(year: number): Promise<void> {
     if (this.data[year]) return;
+    if (localStorage.getItem('randomData')) {
+      this.data[year] = generateRandomData();
+      return;
+    }
     const response = await StorageHandler.load(year.toString());
     if (response) {
       this.data[year] = JSON.parse(response);
