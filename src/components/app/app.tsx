@@ -70,7 +70,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
                 <IconButton
                   color="inherit"
                   onClick={() => {
-                    StorageHandler.connectCloud(SupportedClouds.Dropbox);
+                    StorageHandler.connectCloud(SupportedClouds.OneDrive);
                     updateStatus('cloud', true);
                   }}
                 >
