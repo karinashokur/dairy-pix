@@ -53,10 +53,15 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
     StorageHandler.init();
     updateStatus('cloud', StorageHandler.cloud !== false);
     (async () => {
-      updateStatus('transferring', true);
-      await StorageHandler.transferToCloud();
-      updateStatus('transferring', false);
-      loadYear(now);
+      try {
+        updateStatus('transferring', true);
+        await StorageHandler.transferToCloud();
+        updateStatus('transferring', false);
+        loadYear(now);
+      } catch (e) {
+        console.error('Failed to transfer all diary data to the cloud storage:', e);
+        updateStatus('loading', 'error'); 
+      }
     })();
   }, []); 
   return (

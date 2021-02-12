@@ -28,17 +28,19 @@ export default abstract class CloudOneDrive extends CloudStorage {
   }
   static async save(filename: string, value: string): Promise<void> {
     if (!this.token) this.init();
-    await fetch(`${this.api.url}:/${filename}:/content`, {
+    const response = await fetch(`${this.api.url}:/${filename}:/content`, {
       method: 'PUT',
       headers: [['Authorization', `Bearer ${this.token}`]],
       body: value,
     });
+    if (!response.ok) throw JSON.parse(await response.text());
   }
   static async load(filename: string): Promise<string | null> {
     if (!this.token) this.init();
     const response = await fetch(`${this.api.url}:/${filename}:/content`, {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
+    if (!response.ok && response.status !== 404) throw JSON.parse(await response.text());
     return response.text();
   }
   static async isPopulated(): Promise<boolean> {
@@ -46,8 +48,9 @@ export default abstract class CloudOneDrive extends CloudStorage {
     const response = await fetch(`${this.api.url}/children`, {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
-    const folder = JSON.parse(await response.text());
-    if (folder.value.length > 0) return true;
+    const body = JSON.parse(await response.text());
+    if (!response.ok) throw body;
+    if (body.value.length > 0) return true;
     return false;
   }
   static async disconnect(): Promise<void> {
