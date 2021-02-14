@@ -1,10 +1,12 @@
 import { isArray } from 'util';
 import CloudStorage from '../types/cloud-storage';
 import CloudDropbox from './cloud-dropbox';
+import CloudGoogleDrive from './cloud-googledrive';
 import CloudOneDrive from './cloud-onedrive';
 export enum SupportedClouds {
   Dropbox,
-  OneDrive
+  OneDrive,
+  GoogleDrive
 }
 export class LocalStorageError extends Error {
   constructor() {
@@ -58,6 +60,7 @@ export default abstract class StorageHandler {
     switch (variant) {
       case SupportedClouds.Dropbox: this.cloud = CloudDropbox; break;
       case SupportedClouds.OneDrive: this.cloud = CloudOneDrive; break;
+      case SupportedClouds.GoogleDrive: this.cloud = CloudGoogleDrive; break;
       default: break;
     }
     if (this.cloud) {

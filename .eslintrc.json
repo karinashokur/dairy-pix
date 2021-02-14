@@ -32,6 +32,8 @@
     "localStorage": true,
     "window": true,
     "fetch": true,
-    "it": true
+    "it": true,
+    "FormData": true,
+    "Blob": true
   }
 }
