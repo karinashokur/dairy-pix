@@ -1,5 +1,5 @@
 import { isArray } from 'util';
-import CloudStorage from '../types/cloud-storage';
+import CloudStorage from './cloud';
 import CloudDropbox from './cloud-dropbox';
 import CloudGoogleDrive from './cloud-googledrive';
 import CloudOneDrive from './cloud-onedrive';

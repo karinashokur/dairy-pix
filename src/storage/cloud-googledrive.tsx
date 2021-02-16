@@ -1,5 +1,4 @@
-import queryString from 'query-string';
-import CloudStorage from '../types/cloud-storage';
+import CloudStorage from './cloud';
 export default abstract class CloudGoogleDrive extends CloudStorage {
   static api = {
     id: '986706832154-o4c8st4r22prsmi8g1j2gu05be3rgrga.apps.googleusercontent.com',
@@ -7,25 +6,12 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
     readUrl: 'https:
     writeUrl: 'https:
   };
-  static token: string | null = null;
-  static appUrl = window.location.origin;
   static init(): void {
-    if (this.token) return;
-    if (localStorage.getItem('storageToken')) {
-      this.token = localStorage.getItem('storageToken');
-    }
-    if (!this.token && this.getTokenFromUrl()) {
-      this.token = this.getTokenFromUrl();
-      window.history.replaceState(null, 'Cloud Connected', this.appUrl); 
-    }
-    if (!this.token) {
-      window.location.href = `https:        client_id=${this.api.id}&\
-        response_type=token&\
-        scope=${encodeURI(this.api.scopes.join(' '))}&\
-        redirect_uri=${this.appUrl}`.replace(/ /gm, ''); 
-    } else {
-      localStorage.setItem('storageToken', this.token);
-    }
+    super.init(`https:      client_id=${this.api.id}&\
+      response_type=token&\
+      scope=${encodeURI(this.api.scopes.join(' '))}&\
+      redirect_uri=${this.appUrl.replace(/\/$/, '')}` 
+      .replace(/ /gm, '')); 
   }
   static async save(filename: string, value: string): Promise<void> {
     if (!this.token) this.init();
@@ -65,13 +51,5 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
     if (!this.token) this.init();
     return !!await this.exists('*');
   }
-  static async disconnect(): Promise<void> {
-    if (!this.token) return;
-    localStorage.removeItem('storageToken');
-    this.token = null;
-  }
-  static getTokenFromUrl(): string | null {
-    const query = queryString.parse(window.location.hash);
-    return query.access_token ? query.access_token as string : null;
-  }
+  static async disconnect() { super.disconnect(); }
 }

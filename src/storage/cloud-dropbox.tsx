@@ -1,26 +1,11 @@
 import { Dropbox } from 'dropbox';
-import queryString from 'query-string';
 import { isString } from 'util';
-import CloudStorage from '../types/cloud-storage';
+import CloudStorage from './cloud';
 export default abstract class CloudDropbox extends CloudStorage {
   static api = new Dropbox({ clientId: 'h27trbgu4io3fg8', fetch });
-  static token: string | null = null;
-  static appUrl = window.location.origin + window.location.pathname;
   static init(): void {
-    if (this.token) return;
-    if (localStorage.getItem('storageToken')) {
-      this.token = localStorage.getItem('storageToken');
-    }
-    if (!this.token && this.getTokenFromUrl()) {
-      this.token = this.getTokenFromUrl();
-      window.history.replaceState(null, 'Cloud Connected', this.appUrl); 
-    }
-    if (!this.token) {
-      window.location.href = this.api.getAuthenticationUrl(this.appUrl);
-    } else {
-      this.api.setAccessToken(this.token);
-      localStorage.setItem('storageToken', this.token);
-    }
+    super.init(this.api.getAuthenticationUrl(this.appUrl));
+    if (this.token) this.api.setAccessToken(this.token);
   }
   static async save(filename: string, value: string): Promise<void> {
     if (!this.token) this.init();
@@ -53,11 +38,6 @@ export default abstract class CloudDropbox extends CloudStorage {
   static async disconnect(): Promise<void> {
     if (!this.token) return;
     await this.api.authTokenRevoke();
-    localStorage.removeItem('storageToken');
-    this.token = null;
-  }
-  static getTokenFromUrl(): string | null {
-    const query = queryString.parse(window.location.hash);
-    return query.access_token ? query.access_token as string : null;
+    super.disconnect();
   }
 }
