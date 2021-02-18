@@ -1,7 +1,7 @@
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { BarChart, MoreVert, Security, ZoomIn } from '@material-ui/icons';
 import React, { useState } from 'react';
-import './app-menu.scss';
+import './menu.scss';
 interface AppMenuProps {
   repository: {
     url: string,
@@ -36,7 +36,7 @@ const AppMenu: React.FC<AppMenuProps> = ({ repository }) => {
           <span>Privacy</span>
         </MenuItem>
         <MenuItem onClick={() => window.open(repository.url, '_blank')}>
-          <div className="gitlab-icon"><img src={repository.logoSrc} alt="Tanuki" /></div>
+          <div className="menu-icon"><img src={repository.logoSrc} alt="Tanuki" /></div>
           <span>{`View on ${repository.name}`}</span>
         </MenuItem>
       </Menu>

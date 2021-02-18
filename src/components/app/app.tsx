@@ -1,12 +1,13 @@
-import { AppBar, CircularProgress, IconButton, Toolbar, Tooltip, Typography } from '@material-ui/core';
-import { CloudDone, CloudUpload, Warning } from '@material-ui/icons';
+import { AppBar, CircularProgress, Toolbar, Typography } from '@material-ui/core';
+import { Warning } from '@material-ui/icons';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import DataService from '../../services/data-service';
-import StorageHandler, { SupportedClouds } from '../../storage/storage-handler';
+import StorageHandler from '../../storage/storage-handler';
 import Year from '../year/year';
 import './app.scss';
 import AppMenu from './menu/app-menu';
+import CloudMenu from './menu/cloud-menu';
 interface AppProps {
   name: string;
   repository: {
@@ -20,7 +21,6 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
   const [status, setStatus] = useState<{[key: string]: boolean | 'error'}>({
     loading: true, 
     saving: false, 
-    cloud: false, 
     transferring: false, 
   });
   const updateStatus = (key: string, value: boolean | 'error'): void => {
@@ -51,7 +51,6 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
   };
   useEffect(() => {
     StorageHandler.init();
-    updateStatus('cloud', StorageHandler.cloud !== false);
     (async () => {
       try {
         updateStatus('transferring', true);
@@ -69,37 +68,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
       <AppBar className="appbar" position="static">
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
-          <div className="cloud-btn">
-            {!status.cloud && ( 
-              <Tooltip title="Save in Cloud">
-                <IconButton
-                  color="inherit"
-                  onClick={() => {
-                    StorageHandler.connectCloud(SupportedClouds.GoogleDrive);
-                    updateStatus('cloud', true);
-                  }}
-                >
-                  <CloudUpload />
-                </IconButton>
-              </Tooltip>
-            )}
-            {status.cloud && !status.saving && ( 
-              <Tooltip title="Disconnect Cloud">
-                <IconButton
-                  color="inherit"
-                  onClick={() => {
-                    StorageHandler.disconnectCloud();
-                    updateStatus('cloud', false);
-                  }}
-                >
-                  <CloudDone />
-                </IconButton>
-              </Tooltip>
-            )}
-            {status.saving && ( 
-              <CircularProgress className="cloud-saving" color="secondary" size={24} />
-            )}
-          </div>
+          <CloudMenu saving={status.saving} />
           <AppMenu repository={repository} />
         </Toolbar>
       </AppBar>
