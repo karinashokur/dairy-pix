@@ -1,5 +1,7 @@
 import queryString from 'query-string';
+import SupportedClouds from '../types/supported-clouds';
 export default abstract class CloudStorage {
+  abstract readonly variant: SupportedClouds;
   abstract init: () => void;
   abstract save: (filename: string, value: string) => Promise<void>;
   abstract load: (filename: string) => Promise<string | null>;

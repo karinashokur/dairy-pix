@@ -1,6 +1,8 @@
+import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 export default abstract class CloudGoogleDrive extends CloudStorage {
-  static api = {
+  static readonly variant = SupportedClouds.GoogleDrive;
+  static readonly api = {
     id: '986706832154-o4c8st4r22prsmi8g1j2gu05be3rgrga.apps.googleusercontent.com',
     scopes: ['https:
     readUrl: 'https:

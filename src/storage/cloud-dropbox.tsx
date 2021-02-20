@@ -1,15 +1,17 @@
 import { Dropbox } from 'dropbox';
 import { isString } from 'util';
+import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 export default abstract class CloudDropbox extends CloudStorage {
-  static api = new Dropbox({ clientId: 'h27trbgu4io3fg8', fetch });
+  static readonly variant = SupportedClouds.Dropbox;
+  static readonly api = new Dropbox({ clientId: 'h27trbgu4io3fg8', fetch });
   static init(): void {
     super.init(this.api.getAuthenticationUrl(this.appUrl));
     if (this.token) this.api.setAccessToken(this.token);
   }
   static async save(filename: string, value: string): Promise<void> {
     if (!this.token) this.init();
-    await CloudDropbox.api.filesUpload({
+    await this.api.filesUpload({
       path: `/${filename}`,
       contents: value,
       mode: { '.tag': 'overwrite' },
@@ -18,7 +20,7 @@ export default abstract class CloudDropbox extends CloudStorage {
   static async load(filename: string): Promise<string | null> {
     if (!this.token) this.init();
     try {
-      const response = await CloudDropbox.api.filesDownload({ path: `/${filename}` });
+      const response = await this.api.filesDownload({ path: `/${filename}` });
       const reader = new FileReader();
       return new Promise(resolve => {
         reader.onload = () => resolve(reader.result as string);
@@ -31,7 +33,7 @@ export default abstract class CloudDropbox extends CloudStorage {
   }
   static async isPopulated(): Promise<boolean> {
     if (!this.token) this.init();
-    const folder = await CloudDropbox.api.filesListFolder({ path: '' });
+    const folder = await this.api.filesListFolder({ path: '' });
     if (folder.entries.length > 0) return true;
     return false;
   }
