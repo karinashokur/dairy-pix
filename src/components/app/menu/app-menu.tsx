@@ -1,15 +1,18 @@
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
-import { BarChart, MoreVert, Security, ZoomIn } from '@material-ui/icons';
-import React, { useState } from 'react';
+import { ArrowBackIos, ArrowForwardIos, BarChart, MoreVert, Security } from '@material-ui/icons';
+import React, { createElement, useState } from 'react';
 import './menu.scss';
+const ArrowBackIosFixed = () => createElement(ArrowBackIos, { style: { transform: 'translateX(5px)' } });
 interface AppMenuProps {
   repository: {
     url: string,
     name: string,
     logoSrc: string,
   };
+  displayYear: number;
+  setDisplayYear: (year: number) => void;
 }
-const AppMenu: React.FC<AppMenuProps> = ({ repository }) => {
+const AppMenu: React.FC<AppMenuProps> = ({ repository, displayYear, setDisplayYear }) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   return (
     <div>
@@ -23,10 +26,19 @@ const AppMenu: React.FC<AppMenuProps> = ({ repository }) => {
         onClose={() => setAnchor(null)}
         keepMounted
       >
-        <MenuItem>
-          <ZoomIn />
-          <span>Zoom</span>
-        </MenuItem>
+        <li className="year-selection">
+          <IconButton color="inherit" onClick={() => setDisplayYear(displayYear - 1)}>
+            <ArrowBackIosFixed />
+          </IconButton>
+          <span>{displayYear}</span>
+          <IconButton
+            color="inherit"
+            disabled={displayYear >= new Date().getFullYear()}
+            onClick={() => setDisplayYear(displayYear + 1)}
+          >
+            <ArrowForwardIos />
+          </IconButton>
+        </li>
         <MenuItem>
           <BarChart />
           <span>Statistics</span>

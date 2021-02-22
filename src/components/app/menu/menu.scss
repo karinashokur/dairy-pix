@@ -9,3 +9,17 @@
     width: 22px;
   }
 }
+.year-selection {
+  margin-top: -8px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid lightgray;
+  span {
+    padding: 0;
+    text-align: center;
+    flex-grow: 1;
+  }
+  button {
+    border-radius: 0;
+  }
+}

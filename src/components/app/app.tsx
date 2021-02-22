@@ -17,7 +17,7 @@ interface AppProps {
   };
 }
 const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueueSnackbar }) => {
-  const now = new Date().getFullYear();
+  const [displayYear, setDisplayYear] = useState<number>(new Date().getFullYear());
   const [status, setStatus] = useState<{[key: string]: boolean | 'error'}>({
     loading: true, 
     saving: false, 
@@ -43,6 +43,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
     try {
       updateStatus('loading', true);
       await DataService.loadYear(year);
+      setDisplayYear(year);
       updateStatus('loading', false);
     } catch (e) {
       console.error(`Failed to load year '${year}':`, e);
@@ -56,7 +57,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
         updateStatus('transferring', true);
         await StorageHandler.transferToCloud();
         updateStatus('transferring', false);
-        loadYear(now);
+        loadYear(displayYear);
       } catch (e) {
         console.error('Failed to transfer all diary data to the cloud storage:', e);
         updateStatus('loading', 'error'); 
@@ -69,15 +70,11 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
           <CloudMenu saving={status.saving} />
-          <AppMenu repository={repository} />
+          <AppMenu repository={repository} displayYear={displayYear} setDisplayYear={loadYear} />
         </Toolbar>
       </AppBar>
       {!status.loading && (
-        <Year
-          key={now}
-          year={now}
-          onDayUpdated={year => saveYear(year)}
-        />
+        <Year key={displayYear} year={displayYear} onDayUpdated={year => saveYear(year)} />
       )}
       {status.loading === true && ( 
         <div className="placeholder">
