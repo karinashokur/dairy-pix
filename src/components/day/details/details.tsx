@@ -15,8 +15,7 @@ interface DayDetailsProps {
   onClose: (values?: IDay) => void;
 }
 const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
-  if (!values.mood) values = { ...values, mood: 0 }; 
-  const [inputData, setInputData] = useState<IDay>(values);
+  const [inputData, setInputData] = useState<IDay>(values.mood ? values : { ...values, mood: 0 });
   const handleChange = (event: React.ChangeEvent<{ name?: string; value: any }>) => {
     const { name } = event.target;
     if (!name) return;
@@ -28,7 +27,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
     }
     setInputData(oldInputData => ({
       ...oldInputData,
-      [name as string]: value,
+      [name]: value,
     }));
   };
   const MoodPreview = styled.div`
@@ -47,9 +46,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
               onChange={handleChange}
               input={<FilledInput name="mood" id="mood-select" />}
             >
-              {
-                Moods.map((x, i) => <MenuItem key={i} value={i}>{x.name}</MenuItem>)
-              }
+              {Moods.map((v, i) => <MenuItem key={v.color} value={i}>{v.name}</MenuItem>)}
             </Select>
           </FormControl>
         </div>

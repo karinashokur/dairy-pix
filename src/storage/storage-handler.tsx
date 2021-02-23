@@ -71,16 +71,14 @@ export default abstract class StorageHandler {
       return;
     }
     const requests: Promise<void>[] = [];
-    for (const key of this.index) { 
+    this.index.forEach(key => {
       const value = localStorage.getItem(key);
       if (value) {
         requests.push(this.save(key, value));
       }
-    }
-    await Promise.all(requests);
-    for (const key of this.index) { 
-      localStorage.removeItem(key);
-    }
+    });
+    await Promise.all(requests); 
+    this.index.forEach(key => localStorage.removeItem(key)); 
     localStorage.removeItem('storageIndex');
     this.index = [];
   }
