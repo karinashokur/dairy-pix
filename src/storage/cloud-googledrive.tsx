@@ -18,8 +18,11 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
   static async save(filename: string, value: string): Promise<void> {
     if (!this.token) this.init();
     const content = new FormData();
-    content.append('meta', new Blob([JSON.stringify({ title: filename })], { type: 'application/json' }));
     content.append('file', new Blob([value], { type: 'text/plain' }));
+    content.append('meta', new Blob([JSON.stringify({
+      name: filename,
+      parents: ['appDataFolder'],
+    })], { type: 'application/json' }));
     const fileId = await this.exists(filename);
     const response = await fetch(`${this.api.writeUrl}${fileId ? `/${fileId}` : ''}?uploadType=multipart`, {
       method: fileId ? 'PUT' : 'POST',
@@ -40,14 +43,14 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
   }
   static async exists(filename: string): Promise<string | false> {
     if (!this.token) this.init();
-    const query = filename === '*' ? `?g=${filename}` : '';
-    const response = await fetch(`${this.api.readUrl}${query}`, {
+    const query = filename !== '*' ? `&q=${encodeURI(`name='${filename}'`)}` : '';
+    const response = await fetch(`${this.api.readUrl}?spaces=AppDataFolder${query}`, {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
     const body = JSON.parse(await response.text());
     if (!response.ok) throw body;
-    if (body.items.length === 0) return false;
-    return body.items[0].id;
+    if (body.files.length === 0) return false;
+    return body.files[0].id;
   }
   static async isPopulated(): Promise<boolean> {
     if (!this.token) this.init();
