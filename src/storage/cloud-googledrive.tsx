@@ -18,11 +18,11 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
   static async save(filename: string, value: string): Promise<void> {
     if (!this.token) this.init();
     const content = new FormData();
-    content.append('file', new Blob([value], { type: 'text/plain' }));
     content.append('meta', new Blob([JSON.stringify({
       name: filename,
       parents: ['appDataFolder'],
     })], { type: 'application/json' }));
+    content.append('file', new Blob([value], { type: 'text/plain' }));
     const fileId = await this.exists(filename);
     const response = await fetch(`${this.api.writeUrl}${fileId ? `/${fileId}` : ''}?uploadType=multipart`, {
       method: fileId ? 'PUT' : 'POST',
