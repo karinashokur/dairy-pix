@@ -3,7 +3,7 @@ import CloudStorage from './cloud';
 export default abstract class CloudOneDrive extends CloudStorage {
   static readonly variant = SupportedClouds.OneDrive;
   static readonly api = {
-    id: '3705eba3-4eba-4e77-9d94-2ec3e747c9f7',
+    id: process.env.REACT_APP_CLOUD_ONEDRIVE,
     scopes: ['Files.ReadWrite.AppFolder'],
     url: 'https:
   };

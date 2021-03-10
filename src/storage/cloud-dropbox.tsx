@@ -4,7 +4,7 @@ import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 export default abstract class CloudDropbox extends CloudStorage {
   static readonly variant = SupportedClouds.Dropbox;
-  static readonly api = new Dropbox({ clientId: 'h27trbgu4io3fg8', fetch });
+  static readonly api = new Dropbox({ clientId: process.env.REACT_APP_CLOUD_DROPBOX, fetch });
   static init(): void {
     super.init(this.api.getAuthenticationUrl(this.appUrl));
     if (this.token) this.api.setAccessToken(this.token);

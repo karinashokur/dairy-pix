@@ -3,7 +3,7 @@ import CloudStorage from './cloud';
 export default abstract class CloudGoogleDrive extends CloudStorage {
   static readonly variant = SupportedClouds.GoogleDrive;
   static readonly api = {
-    id: '986706832154-o4c8st4r22prsmi8g1j2gu05be3rgrga.apps.googleusercontent.com',
+    id: process.env.REACT_APP_CLOUD_GOOGLE_DRIVE,
     scopes: ['https:
     readUrl: 'https:
     writeUrl: 'https:
