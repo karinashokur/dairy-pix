@@ -1,3 +1,4 @@
+import CloudAuthenticationError from '../errors/cloudAuthenticationError';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 export default abstract class CloudGoogleDrive extends CloudStorage {
@@ -29,6 +30,7 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
       headers: [['Authorization', `Bearer ${this.token}`]],
       body: content,
     });
+    if (response.status === 401) throw new CloudAuthenticationError();
     if (!response.ok) throw JSON.parse(await response.text());
   }
   static async load(filename: string): Promise<string | null> {
@@ -38,6 +40,7 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
     const file = await fetch(`${this.api.readUrl}/${fileId}?alt=media`, {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
+    if (file.status === 401) throw new CloudAuthenticationError();
     if (!file.ok) throw JSON.parse(await file.text());
     return file.text();
   }
@@ -48,6 +51,7 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
     const body = JSON.parse(await response.text());
+    if (response.status === 401) throw new CloudAuthenticationError();
     if (!response.ok) throw body;
     if (body.files.length === 0) return false;
     return body.files[0].id;
@@ -56,5 +60,5 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
     if (!this.token) this.init();
     return !!await this.exists('*');
   }
-  static async disconnect() { super.disconnect(); }
+  static disconnect() { super.disconnect(); }
 }

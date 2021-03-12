@@ -1,15 +1,10 @@
 import { isArray } from 'util';
+import LocalStorageError from '../errors/localStorageError';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 import CloudDropbox from './cloud-dropbox';
 import CloudGoogleDrive from './cloud-googledrive';
 import CloudOneDrive from './cloud-onedrive';
-export class LocalStorageError extends Error {
-  constructor() {
-    super();
-    Object.setPrototypeOf(this, LocalStorageError.prototype);
-  }
-}
 export default abstract class StorageHandler {
   static initialized = false;
   static cloud: CloudStorage | false = false;

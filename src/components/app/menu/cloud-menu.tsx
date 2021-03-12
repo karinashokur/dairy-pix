@@ -1,14 +1,22 @@
 import { CircularProgress, IconButton, Menu, MenuItem, Tooltip } from '@material-ui/core';
 import { CloudDone, CloudOff, CloudQueue } from '@material-ui/icons';
 import React, { useState } from 'react';
+import DataService from '../../../services/data-service';
 import StorageHandler from '../../../storage/storage-handler';
 import SupportedClouds, { CloudsMeta } from '../../../types/supported-clouds';
 import './menu.scss';
 interface CloudMenuProps {
   saving: boolean | 'error';
+  onDisconnect?: () => void;
 }
-const CloudMenu: React.FC<CloudMenuProps> = ({ saving }) => {
+const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const disconnect = () => {
+    setAnchor(null);
+    DataService.clearCache();
+    StorageHandler.disconnectCloud();
+    if (onDisconnect instanceof Function) onDisconnect();
+  };
   const getMenuItem = (variant: SupportedClouds, off = false): JSX.Element => (
     <MenuItem disabled={off} key={variant} onClick={() => StorageHandler.connectCloud(variant)}>
       <div className="menu-icon">
@@ -45,7 +53,7 @@ const CloudMenu: React.FC<CloudMenuProps> = ({ saving }) => {
         {StorageHandler.cloud && ( 
           <div>
             {getMenuItem(StorageHandler.cloud.variant, true)}
-            <MenuItem onClick={() => { setAnchor(null); StorageHandler.disconnectCloud(); }}>
+            <MenuItem onClick={disconnect}>
               <CloudOff />
               <span>Disconnect</span>
             </MenuItem>

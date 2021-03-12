@@ -2,6 +2,7 @@ import { AppBar, CircularProgress, Toolbar, Typography } from '@material-ui/core
 import { Warning } from '@material-ui/icons';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import React, { useEffect, useState } from 'react';
+import CloudAuthenticationError from '../../errors/cloudAuthenticationError';
 import DataService from '../../services/data-service';
 import StorageHandler from '../../storage/storage-handler';
 import Year from '../year/year';
@@ -23,14 +24,26 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
     saving: false, 
     transferring: false, 
   });
+  const now = new Date().getFullYear();
   const updateStatus = (key: string, value: boolean | 'error'): void => {
     setStatus(oldStatus => ({ ...oldStatus, [key]: value }));
+  };
+  const forceCloudDisconnect = () => {
+    if (!StorageHandler.cloud) return;
+    DataService.clearCache();
+    StorageHandler.disconnectCloud();
+    loadYear(displayYear); 
+    enqueueSnackbar('Your session timed out! Please reconnect your cloud', {
+      variant: 'error',
+      anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
+    });
   };
   const saveYear = async (year: number): Promise<void> => {
     try {
       updateStatus('saving', true);
       await DataService.saveYear(year);
     } catch (e) {
+      if (e instanceof CloudAuthenticationError) { forceCloudDisconnect(); return; }
       console.error(`Failed to save year '${year}':`, e);
       enqueueSnackbar('Something went wrong while saving your diary!', {
         variant: 'error',
@@ -46,6 +59,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
       setDisplayYear(year);
       updateStatus('loading', false);
     } catch (e) {
+      if (e instanceof CloudAuthenticationError) { forceCloudDisconnect(); return; }
       console.error(`Failed to load year '${year}':`, e);
       updateStatus('loading', 'error');
     }
@@ -69,7 +83,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
       <AppBar className="appbar" position="static">
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
-          <CloudMenu saving={status.saving} />
+          <CloudMenu saving={status.saving} onDisconnect={() => loadYear(now)} />
           <AppMenu repository={repository} displayYear={displayYear} setDisplayYear={loadYear} />
         </Toolbar>
       </AppBar>

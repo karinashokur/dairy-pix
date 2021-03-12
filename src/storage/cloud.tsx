@@ -6,7 +6,7 @@ export default abstract class CloudStorage {
   abstract save: (filename: string, value: string) => Promise<void>;
   abstract load: (filename: string) => Promise<string | null>;
   abstract isPopulated: () => Promise<boolean>;
-  abstract disconnect: () => Promise<void>;
+  abstract disconnect: () => void;
   static token: string | null = null;
   static appUrl = window.location.origin + window.location.pathname;
   static init(oauth2Url: string): void {

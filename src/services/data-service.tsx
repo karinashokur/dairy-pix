@@ -1,7 +1,7 @@
+import generateRandomData from '../helper/data';
 import StorageHandler from '../storage/storage-handler';
 import IDay from '../types/day';
 import IYear from '../types/year';
-import generateRandomData from '../helper/data';
 export default abstract class DataService {
   static data: {[key: number]: IYear} = [];
   static async loadYear(year: number): Promise<void> {
@@ -28,5 +28,8 @@ export default abstract class DataService {
     if (!this.data[year]) this.data[year] = {};
     if (!this.data[year][month]) this.data[year][month] = {};
     this.data[year][month][day] = values;
+  }
+  static clearCache(): void {
+    this.data = [];
   }
 }

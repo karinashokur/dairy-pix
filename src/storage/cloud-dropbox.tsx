@@ -1,5 +1,6 @@
 import { Dropbox } from 'dropbox';
 import { isString } from 'util';
+import CloudAuthenticationError from '../errors/cloudAuthenticationError';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 export default abstract class CloudDropbox extends CloudStorage {
@@ -11,11 +12,16 @@ export default abstract class CloudDropbox extends CloudStorage {
   }
   static async save(filename: string, value: string): Promise<void> {
     if (!this.token) this.init();
-    await this.api.filesUpload({
-      path: `/${filename}`,
-      contents: value,
-      mode: { '.tag': 'overwrite' },
-    });
+    try {
+      await this.api.filesUpload({
+        path: `/${filename}`,
+        contents: value,
+        mode: { '.tag': 'overwrite' },
+      });
+    } catch (e) {
+      if (e.status && e.status === 401) throw new CloudAuthenticationError();
+      throw e;
+    }
   }
   static async load(filename: string): Promise<string | null> {
     if (!this.token) this.init();
@@ -27,7 +33,8 @@ export default abstract class CloudDropbox extends CloudStorage {
         reader.readAsText((response as any).fileBlob);
       });
     } catch (e) {
-      if (isString(e.error) && e.error.includes('path/not_found')) return null;
+      if (e.status && e.status === 401) throw new CloudAuthenticationError();
+      if (isString(e.error) && e.error.includes('path/not_found')) return null; 
       throw e;
     }
   }
@@ -37,9 +44,9 @@ export default abstract class CloudDropbox extends CloudStorage {
     if (folder.entries.length > 0) return true;
     return false;
   }
-  static async disconnect(): Promise<void> {
+  static disconnect(): void {
     if (!this.token) return;
-    await this.api.authTokenRevoke();
+    this.api.authTokenRevoke().catch(() => {}); 
     super.disconnect();
   }
 }
