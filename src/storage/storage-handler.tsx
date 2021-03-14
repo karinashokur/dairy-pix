@@ -1,5 +1,5 @@
 import { isArray } from 'util';
-import LocalStorageError from '../errors/localStorageError';
+import { CloudInitError, LocalStorageError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 import CloudDropbox from './cloud-dropbox';
@@ -55,8 +55,14 @@ export default abstract class StorageHandler {
       default: break;
     }
     if (this.cloud) {
-      this.cloud.init();
-      localStorage.setItem('storage', variant.toString());
+      try {
+        this.cloud.init();
+        localStorage.setItem('storage', variant.toString());
+      } catch (e) {
+        if (!(e instanceof CloudInitError)) throw e;
+        this.cloud = false;
+        localStorage.removeItem('storage'); 
+      }
     }
   }
   static async transferToCloud(): Promise<void> {

@@ -1,4 +1,5 @@
 import queryString from 'query-string';
+import { CloudInitError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 export default abstract class CloudStorage {
   abstract readonly variant: SupportedClouds;
@@ -19,7 +20,14 @@ export default abstract class CloudStorage {
       window.history.replaceState(null, 'Cloud Connected', this.appUrl); 
     }
     if (!this.token) {
-      window.location.href = oauth2Url;
+      if (localStorage.getItem('storagePending')) {
+        console.warn('Failed to init cloud adapter: ', queryString.parse(window.location.hash));
+        window.history.replaceState(null, '', this.appUrl); 
+        localStorage.removeItem('storagePending');
+        throw new CloudInitError();
+      }
+      localStorage.setItem('storagePending', 'true');
+      window.location.href = oauth2Url; 
     } else {
       localStorage.setItem('storageToken', this.token);
     }

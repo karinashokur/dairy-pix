@@ -1,6 +1,6 @@
 import { Dropbox } from 'dropbox';
 import { isString } from 'util';
-import CloudAuthenticationError from '../errors/cloudAuthenticationError';
+import { CloudAuthenticationError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 export default abstract class CloudDropbox extends CloudStorage {

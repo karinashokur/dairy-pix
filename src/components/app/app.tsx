@@ -2,9 +2,9 @@ import { AppBar, CircularProgress, Toolbar, Typography } from '@material-ui/core
 import { Warning } from '@material-ui/icons';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import CloudAuthenticationError from '../../errors/cloudAuthenticationError';
 import DataService from '../../services/data-service';
 import StorageHandler from '../../storage/storage-handler';
+import { CloudAuthenticationError } from '../../types/errors';
 import Year from '../year/year';
 import './app.scss';
 import AppMenu from './menu/app-menu';
@@ -33,7 +33,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
     DataService.clearCache();
     StorageHandler.disconnectCloud();
     loadYear(displayYear); 
-    enqueueSnackbar('Your session timed out! Please reconnect your cloud', {
+    enqueueSnackbar('Your session has expired! Please reconnect your cloud', {
       variant: 'error',
       anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
     });
