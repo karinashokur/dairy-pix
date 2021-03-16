@@ -5,7 +5,7 @@ import gitlabLogo from './assets/gitlab.svg';
 import App from './components/app/app';
 import './index.scss';
 ReactDOM.render(
-  <SnackbarProvider maxSnack={1}>
+  <SnackbarProvider maxSnack={2} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
     <App
       name="Pixel Diary"
       repository={{

@@ -1,5 +1,5 @@
 import { isArray } from 'util';
-import { CloudInitError, LocalStorageError } from '../types/errors';
+import { CloudInitError, LocalStorageError, CloudTransferError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 import CloudDropbox from './cloud-dropbox';
@@ -67,10 +67,7 @@ export default abstract class StorageHandler {
   }
   static async transferToCloud(): Promise<void> {
     if (!this.cloud || !this.index.length) return;
-    if (await this.cloud.isPopulated()) {
-      console.warn('ABORTED TRANSFER: Cloud storage already contains diary data!');
-      return;
-    }
+    if (await this.cloud.isPopulated()) throw new CloudTransferError();
     const requests: Promise<void>[] = [];
     this.index.forEach(key => {
       const value = localStorage.getItem(key);

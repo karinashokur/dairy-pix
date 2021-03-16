@@ -30,6 +30,7 @@ export default abstract class CloudStorage {
       window.location.href = oauth2Url; 
     } else {
       localStorage.setItem('storageToken', this.token);
+      localStorage.removeItem('storagePending');
     }
   }
   static getTokenFromUrl(): string | null {

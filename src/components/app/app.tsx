@@ -1,10 +1,10 @@
-import { AppBar, CircularProgress, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Button, CircularProgress, Toolbar, Typography } from '@material-ui/core';
 import { Warning } from '@material-ui/icons';
-import { withSnackbar, WithSnackbarProps } from 'notistack';
+import { withSnackbar, WithSnackbarProps, OptionsObject } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import DataService from '../../services/data-service';
 import StorageHandler from '../../storage/storage-handler';
-import { CloudAuthenticationError } from '../../types/errors';
+import { CloudAuthenticationError, CloudTransferError, LocalStorageError } from '../../types/errors';
 import Year from '../year/year';
 import './app.scss';
 import AppMenu from './menu/app-menu';
@@ -17,7 +17,9 @@ interface AppProps {
     logoSrc: string,
   };
 }
-const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueueSnackbar }) => {
+const App: React.FC<AppProps & WithSnackbarProps> = (
+  { name, repository, enqueueSnackbar, closeSnackbar },
+) => {
   const [displayYear, setDisplayYear] = useState<number>(new Date().getFullYear());
   const [status, setStatus] = useState<{[key: string]: boolean | 'error'}>({
     loading: true, 
@@ -25,6 +27,11 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
     transferring: false, 
   });
   const now = new Date().getFullYear();
+  const infoSnackbarOpt: OptionsObject = {
+    variant: 'info',
+    persist: true,
+    action: key => <Button onClick={() => { closeSnackbar(key); }}>Ok</Button>,
+  };
   const updateStatus = (key: string, value: boolean | 'error'): void => {
     setStatus(oldStatus => ({ ...oldStatus, [key]: value }));
   };
@@ -33,10 +40,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
     DataService.clearCache();
     StorageHandler.disconnectCloud();
     loadYear(displayYear); 
-    enqueueSnackbar('Your session has expired! Please reconnect your cloud', {
-      variant: 'error',
-      anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
-    });
+    enqueueSnackbar('Your session has expired! Please reconnect your cloud', { variant: 'info' });
   };
   const saveYear = async (year: number): Promise<void> => {
     try {
@@ -44,11 +48,11 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
       await DataService.saveYear(year);
     } catch (e) {
       if (e instanceof CloudAuthenticationError) { forceCloudDisconnect(); return; }
+      if (e instanceof LocalStorageError) {
+        enqueueSnackbar('Your browsers storage might be full. Consider connecting a cloud storage', infoSnackbarOpt);
+      }
       console.error(`Failed to save year '${year}':`, e);
-      enqueueSnackbar('Something went wrong while saving your diary!', {
-        variant: 'error',
-        anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
-      });
+      enqueueSnackbar('Something went wrong while saving your diary!', { variant: 'error' });
     }
     updateStatus('saving', false);
   };
@@ -64,18 +68,26 @@ const App: React.FC<AppProps & WithSnackbarProps> = ({ name, repository, enqueue
       updateStatus('loading', 'error');
     }
   };
+  const transferDataToCloud = async () => {
+    updateStatus('transferring', true);
+    try {
+      await StorageHandler.transferToCloud();
+    } catch (e) {
+      if (e instanceof CloudTransferError) {
+        enqueueSnackbar(`Your local data cloud not be transferred to your cloud, because it \
+          already contains diary data`, infoSnackbarOpt);
+      } else {
+        console.error('Failed to transfer all diary data to the cloud storage:', e);
+        enqueueSnackbar('Something went wrong while transferring your diary data!', { variant: 'error' });
+      }
+    }
+    updateStatus('transferring', false);
+  };
   useEffect(() => {
     StorageHandler.init();
     (async () => {
-      try {
-        updateStatus('transferring', true);
-        await StorageHandler.transferToCloud();
-        updateStatus('transferring', false);
-        loadYear(displayYear);
-      } catch (e) {
-        console.error('Failed to transfer all diary data to the cloud storage:', e);
-        updateStatus('loading', 'error'); 
-      }
+      transferDataToCloud();
+      loadYear(displayYear);
     })();
   }, []); 
   return (

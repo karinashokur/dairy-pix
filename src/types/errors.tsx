@@ -10,6 +10,12 @@ export class CloudInitError extends Error {
     Object.setPrototypeOf(this, CloudInitError.prototype);
   }
 }
+export class CloudTransferError extends Error {
+  constructor() {
+    super();
+    Object.setPrototypeOf(this, CloudTransferError.prototype);
+  }
+}
 export class LocalStorageError extends Error {
   constructor() {
     super();
