@@ -74,8 +74,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       await StorageHandler.transferToCloud();
     } catch (e) {
       if (e instanceof CloudTransferError) {
-        enqueueSnackbar(`Your local data cloud not be transferred to your cloud, because it \
-          already contains diary data`, infoSnackbarOpt);
+        enqueueSnackbar('Your local data cloud not be transferred to your cloud, because it already contains diary data', infoSnackbarOpt);
       } else {
         console.error('Failed to transfer all diary data to the cloud storage:', e);
         enqueueSnackbar('Something went wrong while transferring your diary data!', { variant: 'error' });

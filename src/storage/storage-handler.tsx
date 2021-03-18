@@ -1,5 +1,6 @@
 import { isArray } from 'util';
-import { CloudInitError, LocalStorageError, CloudTransferError } from '../types/errors';
+import CryptoService from '../services/crypto-service';
+import { CloudInitError, CloudTransferError, LocalStorageError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 import CloudDropbox from './cloud-dropbox';
@@ -24,27 +25,26 @@ export default abstract class StorageHandler {
   }
   static async save(key: string, value: string): Promise<void> {
     if (!this.initialized) this.init();
-    this.updateIndex(key);
+    const cryptoValue = CryptoService.encrypt(value);
     if (this.cloud) {
-      await this.cloud.save(key, value); return;
+      await this.cloud.save(key, cryptoValue); return;
     }
     try {
-      localStorage.setItem(key, value);
+      localStorage.setItem(key, cryptoValue);
+      this.updateIndex(key);
     } catch (e) {
       throw new LocalStorageError();
     }
   }
   static async load(key: string): Promise<string | null> {
     if (!this.initialized) this.init();
-    if (this.cloud) {
-      return this.cloud.load(key);
-    }
-    return localStorage.getItem(key);
+    const value = this.cloud ? await this.cloud.load(key) : localStorage.getItem(key);
+    return value ? CryptoService.decrypt(value) : null;
   }
   static updateIndex(key: string): void {
     if (this.cloud || this.index.includes(key)) return;
     this.index.push(key);
-    this.save('storageIndex', JSON.stringify(this.index));
+    localStorage.setItem('storageIndex', JSON.stringify(this.index));
   }
   static connectCloud(variant: SupportedClouds): void {
     if (this.cloud) return;
