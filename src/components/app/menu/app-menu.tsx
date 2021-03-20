@@ -1,6 +1,7 @@
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
-import { ArrowBackIos, ArrowForwardIos, BarChart, MoreVert, Security } from '@material-ui/icons';
+import { ArrowBackIos, ArrowForwardIos, Lock, MoreVert, Security } from '@material-ui/icons';
 import React, { createElement, useState } from 'react';
+import PasswordInput from '../../password-input/password-input';
 import './menu.scss';
 const ArrowBackIosFixed = () => createElement(ArrowBackIos, { style: { transform: 'translateX(5px)' } });
 interface AppMenuProps {
@@ -11,9 +12,13 @@ interface AppMenuProps {
   };
   displayYear: number;
   setDisplayYear: (year: number) => void;
+  onEncEnable: (password: string) => void;
 }
-const AppMenu: React.FC<AppMenuProps> = ({ repository, displayYear, setDisplayYear }) => {
+const AppMenu: React.FC<AppMenuProps> = (
+  { repository, displayYear, setDisplayYear, onEncEnable },
+) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const [passwordInput, setPasswordInput] = useState<boolean>(false);
   return (
     <div>
       <IconButton color="inherit" onClick={event => setAnchor(event.currentTarget)}>
@@ -39,9 +44,9 @@ const AppMenu: React.FC<AppMenuProps> = ({ repository, displayYear, setDisplayYe
             <ArrowForwardIos />
           </IconButton>
         </li>
-        <MenuItem>
-          <BarChart />
-          <span>Statistics</span>
+        <MenuItem onClick={() => { setAnchor(null); setPasswordInput(true); }}>
+          <Lock />
+          <span>Enable Encryption</span>
         </MenuItem>
         <MenuItem>
           <Security />
@@ -52,6 +57,13 @@ const AppMenu: React.FC<AppMenuProps> = ({ repository, displayYear, setDisplayYe
           <span>{`View on ${repository.name}`}</span>
         </MenuItem>
       </Menu>
+      {passwordInput && (
+        <PasswordInput onClose={password => {
+          setPasswordInput(false);
+          if (password) onEncEnable(password);
+        }}
+        />
+      )}
     </div>
   );
 };

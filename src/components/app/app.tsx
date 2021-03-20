@@ -9,6 +9,7 @@ import Year from '../year/year';
 import './app.scss';
 import AppMenu from './menu/app-menu';
 import CloudMenu from './menu/cloud-menu';
+import CryptoService from '../../services/crypto-service';
 interface AppProps {
   name: string;
   repository: {
@@ -82,6 +83,10 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
     }
     updateStatus('transferring', false);
   };
+  const encryptionSetup = (password: string) => {
+    console.log(`encryption setup: '${password}'`);
+    CryptoService.init(password);
+  };
   useEffect(() => {
     StorageHandler.init();
     (async () => {
@@ -95,7 +100,12 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
           <CloudMenu saving={status.saving} onDisconnect={() => loadYear(now)} />
-          <AppMenu repository={repository} displayYear={displayYear} setDisplayYear={loadYear} />
+          <AppMenu
+            repository={repository}
+            displayYear={displayYear}
+            setDisplayYear={loadYear}
+            onEncEnable={encryptionSetup}
+          />
         </Toolbar>
       </AppBar>
       {!status.loading && (

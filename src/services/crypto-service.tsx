@@ -1,7 +1,18 @@
 import CryptoJS from 'crypto-js';
 import { CryptoError } from '../types/errors';
 export default abstract class CryptoService {
-  private static passphrase: string | false = 'myPassword'; 
+  private static checkValue = '4c6f72656d20697073756d';
+  private static passphrase: string | false;
+  static init(password: string, initCypher?: string): boolean {
+    if (this.passphrase) return true;
+    const passwordHash = CryptoJS.HmacSHA256(password, CryptoJS.MD5(password)).toString();
+    if (initCypher) {
+      const initValue = CryptoJS.AES.decrypt(initCypher, passwordHash).toString(CryptoJS.enc.Utf8);
+      if (this.checkValue !== initValue) return false;
+    }
+    this.passphrase = passwordHash;
+    return true;
+  }
   static encrypt(value: string): string {
     if (!this.passphrase) return value;
     try {
