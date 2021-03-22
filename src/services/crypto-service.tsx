@@ -3,15 +3,18 @@ import { CryptoError } from '../types/errors';
 export default abstract class CryptoService {
   private static checkValue = '4c6f72656d20697073756d';
   private static passphrase: string | false;
-  static init(password: string, initCypher?: string): boolean {
-    if (this.passphrase) return true;
-    const passwordHash = CryptoJS.HmacSHA256(password, CryptoJS.MD5(password)).toString();
-    if (initCypher) {
-      const initValue = CryptoJS.AES.decrypt(initCypher, passwordHash).toString(CryptoJS.enc.Utf8);
-      if (this.checkValue !== initValue) return false;
+  static init(password: string, checkCipher?: string): string | false {
+    if (!this.passphrase) {
+      const passwordHash = CryptoJS.HmacSHA256(password, CryptoJS.MD5(password)).toString();
+      if (checkCipher) {
+        try {
+          const value = CryptoJS.AES.decrypt(checkCipher, passwordHash).toString(CryptoJS.enc.Utf8);
+          if (this.checkValue !== value) return false;
+        } catch (e) { return false; }
+      }
+      this.passphrase = passwordHash;
     }
-    this.passphrase = passwordHash;
-    return true;
+    return CryptoJS.AES.encrypt(this.checkValue, this.passphrase).toString();
   }
   static encrypt(value: string): string {
     if (!this.passphrase) return value;

@@ -10,3 +10,19 @@ body {
 body, html, #root {
   height: 100%;
 }
+.placeholder {
+  position: relative;
+  top: calc(50% - 100px);
+  width: 100%;
+  text-align: center;
+  color: white;
+  svg.icon {
+    font-size: 6.3rem;
+  }
+  p {
+    margin: 0;
+  }
+  &.error {
+    color: #D32F2F;
+  }
+}

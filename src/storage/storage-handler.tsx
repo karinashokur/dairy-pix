@@ -25,7 +25,7 @@ export default abstract class StorageHandler {
   }
   static async save(key: string, value: string): Promise<void> {
     if (!this.initialized) this.init();
-    const cryptoValue = CryptoService.encrypt(value);
+    const cryptoValue = key === 'encryption' ? value : CryptoService.encrypt(value);
     if (this.cloud) {
       await this.cloud.save(key, cryptoValue); return;
     }

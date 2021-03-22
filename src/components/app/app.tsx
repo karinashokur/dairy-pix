@@ -1,15 +1,15 @@
 import { AppBar, Button, CircularProgress, Toolbar, Typography } from '@material-ui/core';
 import { Warning } from '@material-ui/icons';
-import { withSnackbar, WithSnackbarProps, OptionsObject } from 'notistack';
+import { OptionsObject, withSnackbar, WithSnackbarProps } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import DataService from '../../services/data-service';
 import StorageHandler from '../../storage/storage-handler';
 import { CloudAuthenticationError, CloudTransferError, LocalStorageError } from '../../types/errors';
+import Lockscreen from '../lockscreen/lockscreen';
 import Year from '../year/year';
 import './app.scss';
 import AppMenu from './menu/app-menu';
 import CloudMenu from './menu/cloud-menu';
-import CryptoService from '../../services/crypto-service';
 interface AppProps {
   name: string;
   repository: {
@@ -27,6 +27,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
     saving: false, 
     transferring: false, 
   });
+  const [locked, setLocked] = useState<string | false>(false);
   const now = new Date().getFullYear();
   const infoSnackbarOpt: OptionsObject = {
     variant: 'info',
@@ -36,7 +37,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
   const updateStatus = (key: string, value: boolean | 'error'): void => {
     setStatus(oldStatus => ({ ...oldStatus, [key]: value }));
   };
-  const forceCloudDisconnect = () => {
+  const forceCloudDisconnect = (): void => {
     if (!StorageHandler.cloud) return;
     DataService.clearCache();
     StorageHandler.disconnectCloud();
@@ -69,7 +70,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       updateStatus('loading', 'error');
     }
   };
-  const transferDataToCloud = async () => {
+  const transferDataToCloud = async (): Promise<void> => {
     updateStatus('transferring', true);
     try {
       await StorageHandler.transferToCloud();
@@ -83,15 +84,20 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
     }
     updateStatus('transferring', false);
   };
-  const encryptionSetup = (password: string) => {
-    console.log(`encryption setup: '${password}'`);
-    CryptoService.init(password);
+  const checkForEncryption = async (): Promise<boolean> => {
+    const checkCipher = await StorageHandler.load('encryption');
+    if (!checkCipher) return false;
+    setLocked(checkCipher);
+    updateStatus('loading', false);
+    return true;
   };
   useEffect(() => {
     StorageHandler.init();
     (async () => {
-      transferDataToCloud();
-      loadYear(displayYear);
+      if (!(await checkForEncryption())) {
+        await transferDataToCloud();
+        await loadYear(displayYear);
+      }
     })();
   }, []); 
   return (
@@ -100,15 +106,10 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
           <CloudMenu saving={status.saving} onDisconnect={() => loadYear(now)} />
-          <AppMenu
-            repository={repository}
-            displayYear={displayYear}
-            setDisplayYear={loadYear}
-            onEncEnable={encryptionSetup}
-          />
+          <AppMenu repository={repository} displayYear={displayYear} setDisplayYear={loadYear} />
         </Toolbar>
       </AppBar>
-      {!status.loading && (
+      {!status.loading && !locked && (
         <Year key={displayYear} year={displayYear} onDayUpdated={year => saveYear(year)} />
       )}
       {status.loading === true && ( 
@@ -119,9 +120,15 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       )}
       {status.loading === 'error' && ( 
         <div className="placeholder error">
-          <Warning />
+          <Warning className="icon" />
           <p>Something went wrong while loading your diary!</p>
         </div>
+      )}
+      {locked && ( 
+        <Lockscreen
+          checkCipher={locked}
+          onUnlock={() => { setLocked(false); loadYear(displayYear); }}
+        />
       )}
     </div>
   );
