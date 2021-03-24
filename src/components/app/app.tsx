@@ -26,6 +26,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
     loading: true, 
     saving: false, 
     transferring: false, 
+    encrypting: false, 
   });
   const [locked, setLocked] = useState<string | false>(false);
   const now = new Date().getFullYear();
@@ -106,7 +107,12 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
           <CloudMenu saving={status.saving} onDisconnect={() => loadYear(now)} />
-          <AppMenu repository={repository} displayYear={displayYear} setDisplayYear={loadYear} />
+          <AppMenu
+            repository={repository}
+            displayYear={displayYear}
+            setDisplayYear={loadYear}
+            setEncrypting={s => { updateStatus('loading', s); updateStatus('encrypting', s); }}
+          />
         </Toolbar>
       </AppBar>
       {!status.loading && !locked && (
@@ -115,7 +121,8 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       {status.loading === true && ( 
         <div className="placeholder">
           <CircularProgress color="secondary" size={100} />
-          { status.transferring && <p>Transferring data to your cloud</p> }
+          { status.transferring && <p>Transferring your diary to your cloud</p> }
+          { status.encrypting && <p>Encrypting your diary</p> }
         </div>
       )}
       {status.loading === 'error' && ( 

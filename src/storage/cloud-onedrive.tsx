@@ -33,16 +33,17 @@ export default abstract class CloudOneDrive extends CloudStorage {
     if (!response.ok && response.status !== 404) throw JSON.parse(await response.text());
     return response.text();
   }
-  static async isPopulated(): Promise<boolean> {
+  static async list(): Promise<string[]> {
     if (!this.token) this.init();
-    const response = await fetch(`${this.api.url}/children`, {
+    const response = await fetch(`${this.api.url}/children?$top=2000`, {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
     const body = JSON.parse(await response.text());
     if (response.status === 401) throw new CloudAuthenticationError();
     if (!response.ok) throw body;
-    if (body.value.length > 0) return true;
-    return false;
+    const keys: string[] = [];
+    body.value.forEach((v: {name: string}) => keys.push(v.name));
+    return keys;
   }
   static disconnect() { super.disconnect(); }
 }

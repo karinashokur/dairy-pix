@@ -38,11 +38,11 @@ export default abstract class CloudDropbox extends CloudStorage {
       throw e;
     }
   }
-  static async isPopulated(): Promise<boolean> {
+  static async list(): Promise<string[]> {
     if (!this.token) this.init();
-    const folder = await this.api.filesListFolder({ path: '' });
-    if (folder.entries.length > 0) return true;
-    return false;
+    const keys: string[] = [];
+    (await this.api.filesListFolder({ path: '', limit: 2000 })).entries.forEach(e => keys.push(e.name));
+    return keys;
   }
   static disconnect(): void {
     if (!this.token) return;

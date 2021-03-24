@@ -41,6 +41,11 @@ export default abstract class StorageHandler {
     const value = this.cloud ? await this.cloud.load(key) : localStorage.getItem(key);
     return value ? CryptoService.decrypt(value) : null;
   }
+  static async list(): Promise<string[]> {
+    if (!this.initialized) this.init();
+    if (this.cloud) return this.cloud.list();
+    return this.index;
+  }
   static updateIndex(key: string): void {
     if (this.cloud || this.index.includes(key)) return;
     this.index.push(key);
@@ -67,7 +72,7 @@ export default abstract class StorageHandler {
   }
   static async transferToCloud(): Promise<void> {
     if (!this.cloud || !this.index.length) return;
-    if (await this.cloud.isPopulated()) throw new CloudTransferError();
+    if ((await this.cloud.list()).length > 0) throw new CloudTransferError();
     const requests: Promise<void>[] = [];
     this.index.forEach(key => {
       const value = localStorage.getItem(key);
@@ -79,6 +84,19 @@ export default abstract class StorageHandler {
     this.index.forEach(key => localStorage.removeItem(key)); 
     localStorage.removeItem('storageIndex');
     this.index = [];
+  }
+  static async rewriteAll(): Promise<void> {
+    const keys = await this.list();
+    const loadRequests: Promise<string | null>[] = [];
+    const saveRequests: Promise<void>[] = [];
+    keys.forEach(key => {
+      if (key === 'encryption') return; 
+      const req = StorageHandler.load(key);
+      loadRequests.push(req);
+      req.then(value => { if (value) saveRequests.push(StorageHandler.save(key, value)); });
+    });
+    await Promise.all(loadRequests);
+    await Promise.all(saveRequests);
   }
   static disconnectCloud(): void {
     if (!this.cloud) return;

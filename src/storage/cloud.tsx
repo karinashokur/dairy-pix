@@ -6,7 +6,7 @@ export default abstract class CloudStorage {
   abstract init: () => void;
   abstract save: (filename: string, value: string) => Promise<void>;
   abstract load: (filename: string) => Promise<string | null>;
-  abstract isPopulated: () => Promise<boolean>;
+  abstract list: () => Promise<string[]>;
   abstract disconnect: () => void;
   static token: string | null = null;
   static appUrl = window.location.origin + window.location.pathname;

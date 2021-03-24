@@ -14,15 +14,21 @@ interface AppMenuProps {
   };
   displayYear: number;
   setDisplayYear: (year: number) => void;
+  setEncrypting: (isEncrypting: boolean) => void;
 }
-const AppMenu: React.FC<AppMenuProps> = ({ repository, displayYear, setDisplayYear }) => {
+const AppMenu: React.FC<AppMenuProps> = (
+  { repository, displayYear, setDisplayYear, setEncrypting },
+) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [passwordInput, setPasswordInput] = useState<boolean>(false);
-  const enableEncryption = (password?: string): void => {
+  const enableEncryption = async (password?: string): Promise<void> => {
     setPasswordInput(false);
     if (!password) return;
     const checkCipher = CryptoService.init(password);
     if (checkCipher) StorageHandler.save('encryption', checkCipher);
+    setEncrypting(true);
+    await StorageHandler.rewriteAll();
+    setEncrypting(false);
   };
   return (
     <div>

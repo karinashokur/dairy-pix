@@ -44,21 +44,27 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
     if (!file.ok) throw JSON.parse(await file.text());
     return file.text();
   }
-  static async exists(filename: string): Promise<string | false> {
+  static async list(): Promise<string[]> {
+    if (!this.token) this.init();
+    const keys: string[] = [];
+    (await this.files('*')).forEach((v: {name: string}) => keys.push(v.name));
+    return keys;
+  }
+  private static async files(filename: string): Promise<{name: string, id: string}[]> {
     if (!this.token) this.init();
     const query = filename !== '*' ? `&q=${encodeURI(`name='${filename}'`)}` : '';
-    const response = await fetch(`${this.api.readUrl}?spaces=AppDataFolder${query}`, {
+    const response = await fetch(`${this.api.readUrl}?spaces=AppDataFolder&pageSize=1000${query}`, {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
     const body = JSON.parse(await response.text());
     if (response.status === 401) throw new CloudAuthenticationError();
     if (!response.ok) throw body;
-    if (body.files.length === 0) return false;
-    return body.files[0].id;
+    return body.files;
   }
-  static async isPopulated(): Promise<boolean> {
-    if (!this.token) this.init();
-    return !!await this.exists('*');
+  private static async exists(filename: string): Promise<false | string> {
+    const files = await this.files(filename);
+    if (files.length === 0) return false;
+    return files[0].id;
   }
   static disconnect() { super.disconnect(); }
 }
