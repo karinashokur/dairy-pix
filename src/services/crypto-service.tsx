@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js';
 import { CryptoError } from '../types/errors';
 export default abstract class CryptoService {
   private static checkValue = '4c6f72656d20697073756d';
-  private static passphrase: string | false;
+  private static passphrase: string | false = false;
   static init(password: string, checkCipher?: string): string | false {
     if (!this.passphrase) {
       const passwordHash = CryptoJS.HmacSHA256(password, CryptoJS.MD5(password)).toString();
@@ -41,5 +41,11 @@ export default abstract class CryptoService {
       console.error('Decryption failed: ', e);
       throw new CryptoError();
     }
+  }
+  static disable(): void {
+    this.passphrase = false;
+  }
+  static isEnabled(): boolean {
+    return !!this.passphrase;
   }
 }

@@ -29,7 +29,6 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
     encrypting: false, 
   });
   const [locked, setLocked] = useState<string | false>(false);
-  const now = new Date().getFullYear();
   const infoSnackbarOpt: OptionsObject = {
     variant: 'info',
     persist: true,
@@ -92,24 +91,25 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
     updateStatus('loading', false);
     return true;
   };
-  useEffect(() => {
+  const init = async (): Promise<void> => {
     StorageHandler.init();
-    (async () => {
-      if (!(await checkForEncryption())) {
-        await transferDataToCloud();
-        await loadYear(displayYear);
-      }
-    })();
-  }, []); 
+    setDisplayYear(new Date().getFullYear());
+    if (!(await checkForEncryption())) {
+      await transferDataToCloud();
+      await loadYear(displayYear);
+    }
+  };
+  useEffect(() => { init(); }, []); 
   return (
     <div className="app">
       <AppBar className="appbar" position="static">
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
-          <CloudMenu saving={status.saving} onDisconnect={() => loadYear(now)} />
+          <CloudMenu saving={status.saving} onDisconnect={init} />
           <AppMenu
             repository={repository}
             displayYear={displayYear}
+            isLocked={!!locked}
             setDisplayYear={loadYear}
             setEncrypting={s => { updateStatus('loading', s); updateStatus('encrypting', s); }}
           />
