@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import { isNumber } from 'util';
 import DataService from '../../services/data-service';
@@ -30,14 +30,14 @@ const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
     onUpdate();
   };
   return (
-    <React.Fragment>
+    <Fragment>
       <Pixel className={classes} onClick={!isFiller ? () => setShowDetails(true) : undefined}>
         {data.note && <span className="note-indicator"></span>}
       </Pixel>
       {showDetails && ( 
         <DayDetails date={date} values={data} onClose={handleDetailsClose} />
       )}
-    </React.Fragment>
+    </Fragment>
   );
 };
 export default Day;

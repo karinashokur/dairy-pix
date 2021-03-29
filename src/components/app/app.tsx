@@ -12,11 +12,7 @@ import AppMenu from './menu/app-menu';
 import CloudMenu from './menu/cloud-menu';
 interface AppProps {
   name: string;
-  repository: {
-    url: string,
-    name: string,
-    logoSrc: string,
-  };
+  repository: {url: string, name: string, logoSrc: string};
 }
 const App: React.FC<AppProps & WithSnackbarProps> = (
   { name, repository, enqueueSnackbar, closeSnackbar },

@@ -1,7 +1,7 @@
 import CryptoJS from 'crypto-js';
 import { CryptoError } from '../types/errors';
 export default abstract class CryptoService {
-  private static checkValue = '4c6f72656d20697073756d';
+  private static readonly checkValue = '4c6f72656d20697073756d';
   private static passphrase: string | false = false;
   static init(password: string, checkCipher?: string): string | false {
     if (!this.passphrase) {

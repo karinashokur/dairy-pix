@@ -16,7 +16,7 @@ interface DayDetailsProps {
 }
 const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
   const [inputData, setInputData] = useState<IDay>(values.mood ? values : { ...values, mood: 0 });
-  const handleChange = (event: React.ChangeEvent<{ name?: string; value: any }>) => {
+  const handleChange = (event: React.ChangeEvent<{ name?: string; value: any }>): void => {
     const { name } = event.target;
     if (!name) return;
     let { value } = event.target;
@@ -25,10 +25,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
     } else {
       value = value ? value.substr(0, maxNoteLength) : undefined;
     }
-    setInputData(oldInputData => ({
-      ...oldInputData,
-      [name]: value,
-    }));
+    setInputData(oldInputData => ({ ...oldInputData, [name]: value }));
   };
   const MoodPreview = styled.div`
     background-color: ${Moods[inputData.mood || 0].color};

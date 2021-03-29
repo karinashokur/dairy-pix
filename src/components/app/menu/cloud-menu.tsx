@@ -1,6 +1,6 @@
 import { CircularProgress, IconButton, Menu, MenuItem, Tooltip } from '@material-ui/core';
 import { CloudDone, CloudOff, CloudQueue } from '@material-ui/icons';
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import CryptoService from '../../../services/crypto-service';
 import DataService from '../../../services/data-service';
 import StorageHandler from '../../../storage/storage-handler';
@@ -12,7 +12,7 @@ interface CloudMenuProps {
 }
 const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const disconnect = () => {
+  const disconnect = (): void => {
     setAnchor(null);
     CryptoService.disable();
     DataService.clearCache();
@@ -28,7 +28,7 @@ const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
     </MenuItem>
   );
   return (
-    <React.Fragment>
+    <Fragment>
       <Tooltip title={!StorageHandler.cloud ? 'Connect Your Cloud' : ''}>
         <IconButton color="inherit" onClick={e => { if (!saving) setAnchor(e.currentTarget); }}>
           {!StorageHandler.cloud && ( 
@@ -45,7 +45,7 @@ const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
       <Menu
         className="menu"
         anchorEl={anchor}
-        open={Boolean(anchor)}
+        open={!!anchor}
         onClose={() => setAnchor(null)}
         keepMounted
       >
@@ -62,7 +62,7 @@ const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
           </div>
         )}
       </Menu>
-    </React.Fragment>
+    </Fragment>
   );
 };
 export default CloudMenu;

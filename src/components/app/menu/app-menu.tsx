@@ -7,11 +7,7 @@ import PasswordInput from '../../password-input/password-input';
 import './menu.scss';
 const ArrowBackIosFixed = () => createElement(ArrowBackIos, { style: { transform: 'translateX(5px)' } });
 interface AppMenuProps {
-  repository: {
-    url: string,
-    name: string,
-    logoSrc: string,
-  };
+  repository: {url: string, name: string, logoSrc: string};
   displayYear: number;
   isLocked: boolean;
   setDisplayYear: (year: number) => void;
@@ -28,7 +24,7 @@ const AppMenu: React.FC<AppMenuProps> = (
     const checkCipher = CryptoService.init(password);
     if (checkCipher) StorageHandler.save('encryption', checkCipher);
     setEncrypting(true);
-    await StorageHandler.rewriteAll();
+    await StorageHandler.rewriteAll(); 
     setEncrypting(false);
   };
   return (
@@ -39,7 +35,7 @@ const AppMenu: React.FC<AppMenuProps> = (
       <Menu
         className="menu"
         anchorEl={anchor}
-        open={Boolean(anchor)}
+        open={!!anchor}
         onClose={() => setAnchor(null)}
         keepMounted
       >
