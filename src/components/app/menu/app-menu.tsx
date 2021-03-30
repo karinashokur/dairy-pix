@@ -1,6 +1,7 @@
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Menu, MenuItem } from '@material-ui/core';
 import { ArrowBackIos, ArrowForwardIos, Lock, MoreVert, Security } from '@material-ui/icons';
 import React, { createElement, useState } from 'react';
+import privacyInfo from '../../../privacy';
 import CryptoService from '../../../services/crypto-service';
 import StorageHandler from '../../../storage/storage-handler';
 import PasswordInput from '../../password-input/password-input';
@@ -18,6 +19,7 @@ const AppMenu: React.FC<AppMenuProps> = (
 ) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [passwordInput, setPasswordInput] = useState<boolean>(false);
+  const [privacyDialog, setPrivacyDialog] = useState<boolean>(false);
   const enableEncryption = async (password?: string): Promise<void> => {
     setPasswordInput(false);
     if (!password) return;
@@ -62,7 +64,7 @@ const AppMenu: React.FC<AppMenuProps> = (
             <span>Enable Encryption</span>
           </MenuItem>
         )}
-        <MenuItem>
+        <MenuItem onClick={() => { setAnchor(null); setPrivacyDialog(true); }}>
           <Security />
           <span>Privacy</span>
         </MenuItem>
@@ -71,6 +73,16 @@ const AppMenu: React.FC<AppMenuProps> = (
           <span>{`View on ${repository.name}`}</span>
         </MenuItem>
       </Menu>
+      <Dialog open={privacyDialog} onClose={() => setPrivacyDialog(!privacyDialog)}>
+        <DialogTitle className="dialog-title">
+          <Security />
+          <span>Privacy</span>
+        </DialogTitle>
+        <DialogContent className="privacy-content">{privacyInfo}</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPrivacyDialog(!privacyDialog)} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
       {passwordInput && <PasswordInput onClose={enableEncryption} />}
     </div>
   );

@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText, IconButton, InputAdornment, TextField } from '@material-ui/core';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
+import { Lock, Visibility, VisibilityOff } from '@material-ui/icons';
 import React, { useState } from 'react';
 import './password-input.scss';
 interface PasswordInputProps {
@@ -10,7 +10,10 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ onClose }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   return (
     <Dialog open onClose={() => onClose()}>
-      <DialogTitle>Enable Encryption</DialogTitle>
+      <DialogTitle className="dialog-title">
+        <Lock />
+        <span>Enable Encryption</span>
+      </DialogTitle>
       <DialogContent className="content">
         <p className="warning">
           {'Make sure you do not forget your password! Because losing your password, means losing \

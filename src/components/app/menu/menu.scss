@@ -23,3 +23,15 @@
     border-radius: 0;
   }
 }
+.privacy-content {
+  p {
+    margin: 0;
+    text-align: justify;
+  }
+  li a {
+    word-break: break-all;
+  }
+  h4 {
+    margin-bottom: 2px;
+  }
+}
