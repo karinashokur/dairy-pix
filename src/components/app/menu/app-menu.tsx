@@ -1,14 +1,13 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Menu, MenuItem } from '@material-ui/core';
 import { ArrowBackIos, ArrowForwardIos, Lock, MoreVert, Security } from '@material-ui/icons';
 import React, { createElement, useState } from 'react';
-import { Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
 import privacyInfo from '../../../privacy';
 import CryptoService from '../../../services/crypto-service';
 import StorageHandler from '../../../storage/storage-handler';
 import PasswordInput from '../../password-input/password-input';
 import './menu.scss';
 const ArrowBackIosFixed = () => createElement(ArrowBackIos, { style: { transform: 'translateX(5px)' } });
-interface AppMenuProps extends RouteComponentProps {
+interface AppMenuProps {
   repository: {url: string, name: string, logoSrc: string};
   displayYear: number;
   isLocked: boolean;
@@ -16,10 +15,11 @@ interface AppMenuProps extends RouteComponentProps {
   setEncrypting: (isEncrypting: boolean) => void;
 }
 const AppMenu: React.FC<AppMenuProps> = (
-  { repository, displayYear, isLocked, setDisplayYear, setEncrypting, history },
+  { repository, displayYear, isLocked, setDisplayYear, setEncrypting },
 ) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [passwordInput, setPasswordInput] = useState<boolean>(false);
+  const [privacyDialog, setPrivacyDialog] = useState<boolean>(window.location.hash.includes('privacy'));
   const enableEncryption = async (password?: string): Promise<void> => {
     setPasswordInput(false);
     if (!password) return;
@@ -28,6 +28,10 @@ const AppMenu: React.FC<AppMenuProps> = (
     setEncrypting(true);
     await StorageHandler.rewriteAll(); 
     setEncrypting(false);
+  };
+  const closePrivacyDialog = () => {
+    setPrivacyDialog(false);
+    window.history.pushState(null, '', window.location.origin + window.location.pathname);
   };
   return (
     <div>
@@ -64,7 +68,7 @@ const AppMenu: React.FC<AppMenuProps> = (
             <span>Enable Encryption</span>
           </MenuItem>
         )}
-        <MenuItem onClick={() => { setAnchor(null); history.push('/privacy'); }}>
+        <MenuItem onClick={() => { setAnchor(null); setPrivacyDialog(true); }}>
           <Security />
           <span>Privacy</span>
         </MenuItem>
@@ -73,22 +77,18 @@ const AppMenu: React.FC<AppMenuProps> = (
           <span>{`View on ${repository.name}`}</span>
         </MenuItem>
       </Menu>
-      <Switch>
-        <Route path="/privacy">
-          <Dialog open onClose={() => history.push('/')}>
-            <DialogTitle className="dialog-title">
-              <Security />
-              <span>Privacy</span>
-            </DialogTitle>
-            <DialogContent className="privacy-content">{privacyInfo}</DialogContent>
-            <DialogActions>
-              <Button onClick={() => history.push('/')} color="primary">Close</Button>
-            </DialogActions>
-          </Dialog>
-        </Route>
-      </Switch>
+      <Dialog open={privacyDialog} onClose={closePrivacyDialog}>
+        <DialogTitle className="dialog-title">
+          <Security />
+          <span>Privacy</span>
+        </DialogTitle>
+        <DialogContent className="privacy-content">{privacyInfo}</DialogContent>
+        <DialogActions>
+          <Button onClick={closePrivacyDialog} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
       {passwordInput && <PasswordInput onClose={enableEncryption} />}
     </div>
   );
 };
-export default withRouter(AppMenu);
+export default AppMenu;
