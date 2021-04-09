@@ -82,7 +82,10 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
   };
   const checkForEncryption = async (): Promise<boolean> => {
     const checkCipher = await StorageHandler.load('encryption');
-    if (!checkCipher) return false;
+    if (!checkCipher) {
+      setLocked(false);
+      return false;
+    }
     setLocked(checkCipher);
     updateStatus('loading', false);
     return true;
