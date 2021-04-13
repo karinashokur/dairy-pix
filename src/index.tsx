@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import gitlabLogo from './assets/gitlab.svg';
 import App from './components/app/app';
 import './index.scss';
+import * as serviceWorker from './serviceWorker';
 ReactDOM.render(
   <SnackbarProvider maxSnack={2} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
     <App
@@ -17,3 +18,5 @@ ReactDOM.render(
   </SnackbarProvider>,
   document.getElementById('root'),
 );
+serviceWorker.register();
+console.log('Version', process.env.REACT_APP_VERSION);
