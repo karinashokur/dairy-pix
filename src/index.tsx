@@ -3,20 +3,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import gitlabLogo from './assets/gitlab.svg';
 import App from './components/app/app';
+import Bugsnag from './helper/bugsnag';
 import './index.scss';
 import * as serviceWorker from './serviceWorker';
 ReactDOM.render(
-  <SnackbarProvider maxSnack={2} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-    <App
-      name="Pixel Diary"
-      repository={{
-        name: 'GitLab',
-        url: 'https:
-        logoSrc: gitlabLogo,
-      }}
-    />
-  </SnackbarProvider>,
+  <Bugsnag>
+    <SnackbarProvider maxSnack={2} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+      <App
+        name="Pixel Diary"
+        repository={{
+          name: 'GitLab',
+          url: 'https:
+          logoSrc: gitlabLogo,
+        }}
+      />
+    </SnackbarProvider>
+  </Bugsnag>,
   document.getElementById('root'),
 );
 serviceWorker.register();
-console.log('Version', process.env.REACT_APP_VERSION);
+console.log(`Version ${process.env.REACT_APP_VERSION} (${process.env.NODE_ENV})`);
