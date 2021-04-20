@@ -4,7 +4,7 @@ import { OptionsObject, withSnackbar, WithSnackbarProps } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import DataService from '../../services/data-service';
 import StorageHandler from '../../storage/storage-handler';
-import { CloudAuthenticationError, CloudTransferError, LocalStorageError } from '../../types/errors';
+import { CloudTransferError, LocalStorageError } from '../../types/errors';
 import Lockscreen from '../lockscreen/lockscreen';
 import Year from '../year/year';
 import './app.scss';
@@ -33,19 +33,11 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
   const updateStatus = (key: string, value: boolean | 'error'): void => {
     setStatus(oldStatus => ({ ...oldStatus, [key]: value }));
   };
-  const forceCloudDisconnect = (): void => {
-    if (!StorageHandler.cloud) return;
-    DataService.clearCache();
-    StorageHandler.disconnectCloud();
-    loadYear(displayYear); 
-    enqueueSnackbar('Your session has expired! Please reconnect your cloud', { variant: 'info' });
-  };
   const saveYear = async (year: number): Promise<void> => {
     try {
       updateStatus('saving', true);
       await DataService.saveYear(year);
     } catch (e) {
-      if (e instanceof CloudAuthenticationError) { forceCloudDisconnect(); return; }
       if (e instanceof LocalStorageError) {
         enqueueSnackbar('Your browsers storage might be full. Consider connecting a cloud storage', infoSnackbarOpt);
       }
@@ -61,7 +53,6 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       setDisplayYear(year);
       updateStatus('loading', false);
     } catch (e) {
-      if (e instanceof CloudAuthenticationError) { forceCloudDisconnect(); return; }
       console.error(`Failed to load year '${year}':`, e);
       updateStatus('loading', 'error');
     }
@@ -92,6 +83,11 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
   };
   const init = async (): Promise<void> => {
     StorageHandler.init();
+    StorageHandler.onForcedDisconnect = () => {
+      DataService.clearCache();
+      loadYear(displayYear);
+      enqueueSnackbar('Your session has expired! Please reconnect your cloud', { variant: 'info' });
+    };
     setDisplayYear(new Date().getFullYear());
     if (!(await checkForEncryption())) {
       await transferDataToCloud();

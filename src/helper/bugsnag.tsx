@@ -9,6 +9,7 @@ const bugsnagClient = bugsnag({
   notifyReleaseStages: ['production', 'testing'],
   collectUserIp: false,
   autoCaptureSessions: false,
+  consoleBreadcrumbsEnabled: false,
   filters: ['password', 'token', 'note'],
 });
 bugsnagClient.use(bugsnagReact, React);

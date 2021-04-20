@@ -1,6 +1,6 @@
 import { isArray } from 'util';
 import CryptoService from '../services/crypto-service';
-import { CloudInitError, CloudTransferError, LocalStorageError } from '../types/errors';
+import { CloudInitError, CloudTransferError, LocalStorageError, CloudAuthenticationError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 import CloudDropbox from './cloud-dropbox';
@@ -10,6 +10,7 @@ export default abstract class StorageHandler {
   static initialized = false;
   static cloud: CloudStorage | false = false;
   static index: string[] = [];
+  static onForcedDisconnect: Function;
   static init(): void {
     if (this.initialized) return;
     const serializedIndex = localStorage.getItem('storageIndex');
@@ -26,8 +27,12 @@ export default abstract class StorageHandler {
   static async save(key: string, value: string): Promise<void> {
     if (!this.initialized) this.init();
     const cryptoValue = key === 'encryption' ? value : CryptoService.encrypt(value);
-    if (this.cloud) {
-      await this.cloud.save(key, cryptoValue); return;
+    try {
+      if (this.cloud) {
+        await this.cloud.save(key, cryptoValue); return;
+      }
+    } catch (e) {
+      if (!this.catchDisconnect(e)) throw e;
     }
     try {
       localStorage.setItem(key, cryptoValue);
@@ -38,8 +43,13 @@ export default abstract class StorageHandler {
   }
   static async load(key: string): Promise<string | null> {
     if (!this.initialized) this.init();
-    const value = this.cloud ? await this.cloud.load(key) : localStorage.getItem(key);
-    return value ? CryptoService.decrypt(value) : null;
+    try {
+      const value = this.cloud ? await this.cloud.load(key) : localStorage.getItem(key);
+      return value ? CryptoService.decrypt(value) : null;
+    } catch (e) {
+      if (!this.catchDisconnect(e)) throw e;
+      return null;
+    }
   }
   static async list(): Promise<string[]> {
     if (!this.initialized) this.init();
@@ -103,5 +113,13 @@ export default abstract class StorageHandler {
     this.cloud.disconnect();
     this.cloud = false;
     localStorage.removeItem('storage');
+  }
+  private static catchDisconnect(error: any): boolean {
+    if (error instanceof CloudAuthenticationError) {
+      if (this.onForcedDisconnect instanceof Function) this.disconnectCloud();
+      this.onForcedDisconnect();
+      return true;
+    }
+    return false;
   }
 }
