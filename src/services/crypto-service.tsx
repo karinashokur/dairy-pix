@@ -1,4 +1,5 @@
 import CryptoJS from 'crypto-js';
+import { bugsnagClient } from '../helper/bugsnag';
 import { CryptoError } from '../types/errors';
 export default abstract class CryptoService {
   private static readonly checkValue = '4c6f72656d20697073756d';
@@ -10,7 +11,10 @@ export default abstract class CryptoService {
         try {
           const value = CryptoJS.AES.decrypt(checkCipher, passwordHash).toString(CryptoJS.enc.Utf8);
           if (this.checkValue !== value) return false;
-        } catch (e) { return false; }
+        } catch (e) {
+          bugsnagClient.notify(e);
+          return false;
+        }
       }
       this.passphrase = passwordHash;
     }

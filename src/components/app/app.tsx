@@ -2,6 +2,7 @@ import { AppBar, Button, CircularProgress, Toolbar, Typography } from '@material
 import { Warning } from '@material-ui/icons';
 import { OptionsObject, withSnackbar, WithSnackbarProps } from 'notistack';
 import React, { useEffect, useState } from 'react';
+import { bugsnagClient } from '../../helper/bugsnag';
 import DataService from '../../services/data-service';
 import StorageHandler from '../../storage/storage-handler';
 import { CloudTransferError, LocalStorageError } from '../../types/errors';
@@ -41,6 +42,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       if (e instanceof LocalStorageError) {
         enqueueSnackbar('Your browsers storage might be full. Consider connecting a cloud storage', infoSnackbarOpt);
       }
+      bugsnagClient.notify(e);
       console.error(`Failed to save year '${year}':`, e);
       enqueueSnackbar('Something went wrong while saving your diary!', { variant: 'error' });
     }
@@ -53,6 +55,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       setDisplayYear(year);
       updateStatus('loading', false);
     } catch (e) {
+      bugsnagClient.notify(e);
       console.error(`Failed to load year '${year}':`, e);
       updateStatus('loading', 'error');
     }
@@ -65,6 +68,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       if (e instanceof CloudTransferError) {
         enqueueSnackbar('Your local data cloud not be transferred to your cloud, because it already contains diary data', infoSnackbarOpt);
       } else {
+        bugsnagClient.notify(e);
         console.error('Failed to transfer all diary data to the cloud storage:', e);
         enqueueSnackbar('Something went wrong while transferring your diary data!', { variant: 'error' });
       }
