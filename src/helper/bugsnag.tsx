@@ -1,4 +1,4 @@
-import bugsnag from '@bugsnag/js';
+import bugsnag from '@bugsnag/browser';
 import bugsnagReact from '@bugsnag/plugin-react';
 import React from 'react';
 export const bugsnagClient = bugsnag({
