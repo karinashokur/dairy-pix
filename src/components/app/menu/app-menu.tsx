@@ -39,7 +39,7 @@ const AppMenu: React.FC<AppMenuProps> = (
         <MoreVert />
       </IconButton>
       <Menu
-        className="menu"
+        className="menu-popup"
         anchorEl={anchor}
         open={!!anchor}
         onClose={() => setAnchor(null)}

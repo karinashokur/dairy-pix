@@ -1,26 +1,28 @@
-.menu span {
-  padding-left: 8px;
-}
-.menu-icon {
-  text-align: center;
-  width: 24px;
-  height: 24px;
-  img {
-    width: 22px;
-  }
-}
-.year-selection {
-  margin-top: -8px;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid lightgray;
+.menu-popup {
   span {
-    padding: 0;
-    text-align: center;
-    flex-grow: 1;
+    padding-left: 8px;
   }
-  button {
-    border-radius: 0;
+  .menu-icon {
+    text-align: center;
+    width: 24px;
+    height: 24px;
+    img {
+      width: 22px;
+    }
+  }
+  .year-selection {
+    margin-top: -8px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid lightgray;
+    span {
+      padding: 0;
+      text-align: center;
+      flex-grow: 1;
+    }
+    button {
+      border-radius: 0;
+    }
   }
 }
 .privacy-content {

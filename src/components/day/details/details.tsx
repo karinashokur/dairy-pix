@@ -31,7 +31,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
     background-color: ${Moods[inputData.mood || 0].color};
   `;
   return (
-    <Dialog open onClose={() => onClose()}>
+    <Dialog className="day-details" open onClose={() => onClose()}>
       <DialogTitle>{date.toLocaleDateString(dateString.locale, dateString.options)}</DialogTitle>
       <DialogContent>
         <div className="mood-selection">

@@ -43,7 +43,7 @@ const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
         </IconButton>
       </Tooltip>
       <Menu
-        className="menu"
+        className="menu-popup"
         anchorEl={anchor}
         open={!!anchor}
         onClose={() => setAnchor(null)}

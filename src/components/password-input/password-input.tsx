@@ -9,7 +9,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ onClose }) => {
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   return (
-    <Dialog open onClose={() => onClose()}>
+    <Dialog className="password-input" open onClose={() => onClose()}>
       <DialogTitle className="dialog-title">
         <Lock />
         <span>Enable Encryption</span>
