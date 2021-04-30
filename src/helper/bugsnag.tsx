@@ -9,7 +9,12 @@ export const bugsnagClient = bugsnag({
   collectUserIp: false,
   autoCaptureSessions: false,
   consoleBreadcrumbsEnabled: false,
-  filters: ['password', 'token', 'note'],
+  filters: [
+    /password/i,
+    /token/i,
+    /note/i,
+    /targetText/i, 
+  ],
   beforeSend: report => {
     if (!process.env.REACT_APP_BUGSNAG) report.ignore();
   },
