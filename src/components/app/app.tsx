@@ -76,14 +76,21 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
     updateStatus('transferring', false);
   };
   const checkForEncryption = async (): Promise<boolean> => {
-    const checkCipher = await StorageHandler.load('encryption');
-    if (!checkCipher) {
-      setLocked(false);
-      return false;
+    try {
+      const checkCipher = await StorageHandler.load('encryption');
+      if (!checkCipher) {
+        setLocked(false);
+        return false;
+      }
+      setLocked(checkCipher);
+      updateStatus('loading', false);
+      return true;
+    } catch (e) {
+      bugsnagClient.notify(e);
+      console.error('Failed to check for encryption:', e);
+      updateStatus('loading', 'error');
+      return true;
     }
-    setLocked(checkCipher);
-    updateStatus('loading', false);
-    return true;
   };
   const init = async (): Promise<void> => {
     StorageHandler.init();

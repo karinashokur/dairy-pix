@@ -22,7 +22,7 @@ export default abstract class CloudOneDrive extends CloudStorage {
       body: value,
     });
     if (response.status === 401) throw new CloudAuthenticationError();
-    if (!response.ok) throw JSON.parse(await response.text());
+    if (!response.ok) throw new Error(JSON.parse(await response.text()));
   }
   static async load(filename: string): Promise<string | null> {
     if (!this.token) this.init();
@@ -30,7 +30,7 @@ export default abstract class CloudOneDrive extends CloudStorage {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
     if (response.status === 401) throw new CloudAuthenticationError();
-    if (!response.ok && response.status !== 404) throw JSON.parse(await response.text());
+    if (!response.ok && response.status !== 404) throw new Error(JSON.parse(await response.text()));
     return response.text();
   }
   static async list(): Promise<string[]> {
@@ -40,7 +40,7 @@ export default abstract class CloudOneDrive extends CloudStorage {
     });
     const body = JSON.parse(await response.text());
     if (response.status === 401) throw new CloudAuthenticationError();
-    if (!response.ok) throw body;
+    if (!response.ok) throw new Error(body);
     const keys: string[] = [];
     body.value.forEach((v: {name: string}) => keys.push(v.name));
     return keys;
