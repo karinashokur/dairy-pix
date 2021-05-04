@@ -32,7 +32,7 @@ const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
   return (
     <Fragment>
       <Pixel className={classes} onClick={!isFiller ? () => setShowDetails(true) : undefined}>
-        {data.note && <span className="note-indicator"></span>}
+        {data.note && !isFiller && <span className="note-indicator"></span>}
       </Pixel>
       {showDetails && ( 
         <DayDetails date={date} values={data} onClose={handleDetailsClose} />
