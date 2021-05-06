@@ -2,6 +2,14 @@
   span {
     padding-left: 8px;
   }
+  span.unavailable {
+    font-size: 10px;
+    font-weight: bold;
+    color: red;
+    display: block;
+    padding: 0;
+    margin-top: -8px;
+  }
   .menu-icon {
     text-align: center;
     width: 24px;

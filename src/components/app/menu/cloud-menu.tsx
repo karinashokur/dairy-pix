@@ -20,11 +20,18 @@ const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
     if (onDisconnect instanceof Function) onDisconnect();
   };
   const getMenuItem = (variant: SupportedClouds, off = false): JSX.Element => (
-    <MenuItem disabled={off} key={variant} onClick={() => StorageHandler.connectCloud(variant)}>
+    <MenuItem
+      key={variant}
+      disabled={off || !CloudsMeta[variant].configured}
+      onClick={() => StorageHandler.connectCloud(variant)}
+    >
       <div className="menu-icon">
         <img src={CloudsMeta[variant].logo} alt={CloudsMeta[variant].name} />
       </div>
-      <span>{CloudsMeta[variant].name}</span>
+      <span>
+        {CloudsMeta[variant].name}
+        {!CloudsMeta[variant].configured && <span className="unavailable">not available</span>}
+      </span>
     </MenuItem>
   );
   return (
