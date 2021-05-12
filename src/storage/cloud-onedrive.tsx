@@ -30,7 +30,8 @@ export default abstract class CloudOneDrive extends CloudStorage {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
     if (response.status === 401) throw new CloudAuthenticationError();
-    if (!response.ok && response.status !== 404) throw new Error(JSON.parse(await response.text()));
+    if (!response.ok && response.status === 404) return null; 
+    if (!response.ok) throw new Error(JSON.parse(await response.text()));
     return response.text();
   }
   static async list(): Promise<string[]> {
