@@ -12,8 +12,9 @@ const Lockscreen: React.FC<LockscreenProps> = ({ checkCipher, onUnlock }) => {
   const [error, setError] = useState<boolean>(false);
   const submit = (): void => {
     const init = CryptoService.init(password, checkCipher);
-    if (!init) { setError(true); return; }
-    onUnlock();
+    if (init) { onUnlock(); return; }
+    setError(true);
+    setPassword('');
   };
   return (
     <div className="lockscreen placeholder">
@@ -26,7 +27,7 @@ const Lockscreen: React.FC<LockscreenProps> = ({ checkCipher, onUnlock }) => {
           margin="normal"
           variant="filled"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={e => { setPassword(e.target.value); setError(false); }}
           onKeyDown={e => { if (e.key === 'Enter') submit(); }}
           InputProps={{
             endAdornment: (

@@ -1,4 +1,7 @@
 .lockscreen {
+  &.placeholder {
+    top: calc(50% - 150px);
+  }
   .input {
     background-color: #DFDFDF;
     border-bottom-color: #818181;
