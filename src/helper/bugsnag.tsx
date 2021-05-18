@@ -14,6 +14,7 @@ export const bugsnagClient = bugsnag({
     /token/i,
     /note/i,
     /targetText/i, 
+    /from/i, 
   ],
   beforeSend: report => {
     if (!process.env.REACT_APP_BUGSNAG) report.ignore();

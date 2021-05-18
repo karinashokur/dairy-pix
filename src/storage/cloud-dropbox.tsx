@@ -20,7 +20,7 @@ export default abstract class CloudDropbox extends CloudStorage {
       });
     } catch (e) {
       if (e.status && e.status === 401) throw new CloudAuthenticationError();
-      if (e.error) throw new Error(e.error);
+      if (e.error) throw new Error(JSON.stringify(e.error));
       throw e;
     }
   }
@@ -36,7 +36,7 @@ export default abstract class CloudDropbox extends CloudStorage {
     } catch (e) {
       if (e.status && e.status === 401) throw new CloudAuthenticationError();
       if (isString(e.error) && e.error.includes('path/not_found')) return null; 
-      if (e.error) throw new Error(e.error);
+      if (e.error) throw new Error(JSON.stringify(e.error));
       throw e;
     }
   }

@@ -31,7 +31,7 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
       body: content,
     });
     if (response.status === 401) throw new CloudAuthenticationError();
-    if (!response.ok) throw new Error(JSON.parse(await response.text()));
+    if (!response.ok) throw new Error(await response.text());
   }
   static async load(filename: string): Promise<string | null> {
     if (!this.token) this.init();
@@ -41,7 +41,7 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
     if (file.status === 401) throw new CloudAuthenticationError();
-    if (!file.ok) throw new Error(JSON.parse(await file.text()));
+    if (!file.ok) throw new Error(await file.text());
     return file.text();
   }
   static async list(): Promise<string[]> {
