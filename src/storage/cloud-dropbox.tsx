@@ -1,6 +1,6 @@
 import { Dropbox } from 'dropbox';
 import { isString } from 'util';
-import { CloudAuthenticationError } from '../types/errors';
+import { CloudAuthenticationError, CloudRateLimitError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 export default abstract class CloudDropbox extends CloudStorage {
@@ -20,6 +20,7 @@ export default abstract class CloudDropbox extends CloudStorage {
       });
     } catch (e) {
       if (e.status && e.status === 401) throw new CloudAuthenticationError();
+      if (e.status && e.status === 429) throw new CloudRateLimitError();
       if (e.error) throw new Error(JSON.stringify(e.error));
       throw e;
     }
@@ -35,6 +36,7 @@ export default abstract class CloudDropbox extends CloudStorage {
       });
     } catch (e) {
       if (e.status && e.status === 401) throw new CloudAuthenticationError();
+      if (e.status && e.status === 429) throw new CloudRateLimitError();
       if (isString(e.error) && e.error.includes('path/not_found')) return null; 
       if (e.error) throw new Error(JSON.stringify(e.error));
       throw e;

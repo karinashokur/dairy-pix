@@ -4,6 +4,13 @@ export class CloudAuthenticationError extends Error {
     Object.setPrototypeOf(this, CloudAuthenticationError.prototype);
   }
 }
+export class CloudRateLimitError extends Error {
+  public readonly retryAfter = 1 + Math.random();
+  constructor() {
+    super();
+    Object.setPrototypeOf(this, CloudRateLimitError.prototype);
+  }
+}
 export class CloudInitError extends Error {
   constructor() {
     super();

@@ -1,6 +1,6 @@
 import { isArray } from 'util';
 import CryptoService from '../services/crypto-service';
-import { CloudInitError, CloudTransferError, LocalStorageError, CloudAuthenticationError } from '../types/errors';
+import { CloudAuthenticationError, CloudInitError, CloudRateLimitError, CloudTransferError, LocalStorageError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 import CloudDropbox from './cloud-dropbox';
@@ -27,12 +27,13 @@ export default abstract class StorageHandler {
   static async save(key: string, value: string): Promise<void> {
     if (!this.initialized) this.init();
     const cryptoValue = key === 'encryption' ? value : CryptoService.encrypt(value);
-    try {
-      if (this.cloud) {
-        await this.cloud.save(key, cryptoValue); return;
+    if (this.cloud) {
+      try {
+        const { cloud } = this;
+        await this.retry(() => cloud.save(key, cryptoValue)); return;
+      } catch (e) {
+        if (!this.catchDisconnect(e)) throw e;
       }
-    } catch (e) {
-      if (!this.catchDisconnect(e)) throw e;
     }
     try {
       localStorage.setItem(key, cryptoValue);
@@ -44,7 +45,11 @@ export default abstract class StorageHandler {
   static async load(key: string): Promise<string | null> {
     if (!this.initialized) this.init();
     try {
-      const value = this.cloud ? await this.cloud.load(key) : localStorage.getItem(key);
+      let value: string | null = localStorage.getItem(key);
+      if (this.cloud) {
+        const { cloud } = this;
+        value = await this.retry(() => cloud.load(key));
+      }
       return value ? CryptoService.decrypt(value) : null;
     } catch (e) {
       if (!this.catchDisconnect(e)) throw e;
@@ -121,5 +126,14 @@ export default abstract class StorageHandler {
       return true;
     }
     return false;
+  }
+  private static async retry<T>(request: () => Promise<T>, waitSeconds = 0, count = 0): Promise<T> {
+    try {
+      await new Promise(resolve => setTimeout(resolve, waitSeconds * 1000));
+      return await request();
+    } catch (e) {
+      if (!(e instanceof CloudRateLimitError) || count >= 5) throw e;
+      return this.retry(request, e.retryAfter, count + 1); 
+    }
   }
 }

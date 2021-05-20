@@ -1,4 +1,4 @@
-import { CloudAuthenticationError } from '../types/errors';
+import { CloudAuthenticationError, CloudRateLimitError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 export default abstract class CloudOneDrive extends CloudStorage {
@@ -22,6 +22,7 @@ export default abstract class CloudOneDrive extends CloudStorage {
       body: value,
     });
     if (response.status === 401) throw new CloudAuthenticationError();
+    if (response.status === 429) throw new CloudRateLimitError();
     if (!response.ok) throw new Error(await response.text());
   }
   static async load(filename: string): Promise<string | null> {
@@ -30,6 +31,7 @@ export default abstract class CloudOneDrive extends CloudStorage {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
     if (response.status === 401) throw new CloudAuthenticationError();
+    if (response.status === 429) throw new CloudRateLimitError();
     if (!response.ok && response.status === 404) return null; 
     if (!response.ok) throw new Error(await response.text());
     return response.text();
@@ -41,6 +43,7 @@ export default abstract class CloudOneDrive extends CloudStorage {
     });
     const body = JSON.parse(await response.text());
     if (response.status === 401) throw new CloudAuthenticationError();
+    if (response.status === 429) throw new CloudRateLimitError();
     if (!response.ok) throw new Error(body);
     const keys: string[] = [];
     body.value.forEach((v: {name: string}) => keys.push(v.name));

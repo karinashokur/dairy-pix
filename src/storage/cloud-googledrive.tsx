@@ -1,4 +1,4 @@
-import { CloudAuthenticationError } from '../types/errors';
+import { CloudAuthenticationError, CloudRateLimitError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
 import CloudStorage from './cloud';
 export default abstract class CloudGoogleDrive extends CloudStorage {
@@ -31,16 +31,18 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
       body: content,
     });
     if (response.status === 401) throw new CloudAuthenticationError();
+    if (response.status === 429) throw new CloudRateLimitError();
     if (!response.ok) throw new Error(await response.text());
   }
   static async load(filename: string): Promise<string | null> {
     if (!this.token) this.init();
     const fileId = await this.exists(filename);
-    if (!fileId) return null;
+    if (!fileId) return null; 
     const file = await fetch(`${this.api.readUrl}/${fileId}?alt=media`, {
       headers: [['Authorization', `Bearer ${this.token}`]],
     });
     if (file.status === 401) throw new CloudAuthenticationError();
+    if (file.status === 429) throw new CloudRateLimitError();
     if (!file.ok) throw new Error(await file.text());
     return file.text();
   }
@@ -58,6 +60,7 @@ export default abstract class CloudGoogleDrive extends CloudStorage {
     });
     const body = JSON.parse(await response.text());
     if (response.status === 401) throw new CloudAuthenticationError();
+    if (response.status === 429) throw new CloudRateLimitError();
     if (!response.ok) throw new Error(body);
     return body.files;
   }
