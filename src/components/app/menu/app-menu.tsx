@@ -13,9 +13,10 @@ interface AppMenuProps {
   isLocked: boolean;
   setDisplayYear: (year: number) => void;
   setEncrypting: (isEncrypting: boolean) => void;
+  setProgress: (value: number) => void;
 }
 const AppMenu: React.FC<AppMenuProps> = (
-  { repository, displayYear, isLocked, setDisplayYear, setEncrypting },
+  { repository, displayYear, isLocked, setDisplayYear, setEncrypting, setProgress },
 ) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [passwordInput, setPasswordInput] = useState<boolean>(false);
@@ -26,7 +27,8 @@ const AppMenu: React.FC<AppMenuProps> = (
     const checkCipher = CryptoService.init(password);
     if (checkCipher) StorageHandler.save('encryption', checkCipher);
     setEncrypting(true);
-    await StorageHandler.rewriteAll(); 
+    await StorageHandler.rewriteAll(setProgress); 
+    setProgress(0);
     setEncrypting(false);
   };
   const closePrivacyDialog = () => {

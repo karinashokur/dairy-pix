@@ -85,14 +85,16 @@ export default abstract class StorageHandler {
       }
     }
   }
-  static async transferToCloud(): Promise<void> {
+  static async transferToCloud(progress?: (value: number) => void): Promise<void> {
     if (!this.cloud || !this.index.length) return;
     if ((await this.cloud.list()).length > 0) throw new CloudTransferError();
+    let done = 0;
     const requests: Promise<void>[] = [];
     this.index.forEach(key => {
       const value = localStorage.getItem(key);
       if (value) {
-        requests.push(this.save(key, value));
+        requests.push(this.save(key, value)
+          .then(() => { if (progress) progress((done += 1) / this.index.length); }));
       }
     });
     await Promise.all(requests); 
@@ -100,15 +102,18 @@ export default abstract class StorageHandler {
     localStorage.removeItem('storageIndex');
     this.index = [];
   }
-  static async rewriteAll(): Promise<void> {
+  static async rewriteAll(progress?: (value: number) => void): Promise<void> {
     const keys = await this.list();
-    const loadRequests: Promise<string | null>[] = [];
+    const loadRequests: Promise<void>[] = [];
     const saveRequests: Promise<void>[] = [];
+    let done = 0;
+    const upProgress = () => { if (progress) progress((done += 1) / (keys.length * 2)); };
     keys.forEach(key => {
       if (key === 'encryption') return; 
-      const req = StorageHandler.load(key);
-      loadRequests.push(req);
-      req.then(value => { if (value) saveRequests.push(StorageHandler.save(key, value)); });
+      loadRequests.push(StorageHandler.load(key).then(value => {
+        upProgress();
+        if (value) saveRequests.push(StorageHandler.save(key, value).then(upProgress));
+      }));
     });
     await Promise.all(loadRequests);
     await Promise.all(saveRequests);

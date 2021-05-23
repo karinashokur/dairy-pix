@@ -26,6 +26,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
     encrypting: false, 
   });
   const [locked, setLocked] = useState<string | false>(false);
+  const [progress, setProgress] = useState<number>(0);
   const infoSnackbarOpt: OptionsObject = {
     variant: 'info',
     persist: true,
@@ -63,7 +64,8 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
   const transferDataToCloud = async (): Promise<void> => {
     updateStatus('transferring', true);
     try {
-      await StorageHandler.transferToCloud();
+      await StorageHandler.transferToCloud(setProgress);
+      setProgress(0);
     } catch (e) {
       if (e instanceof CloudTransferError) {
         enqueueSnackbar('Your local data cloud not be transferred to your cloud, because it already contains diary data', infoSnackbarOpt);
@@ -117,6 +119,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
             displayYear={displayYear}
             isLocked={!!locked}
             setDisplayYear={loadYear}
+            setProgress={setProgress}
             setEncrypting={s => { updateStatus('loading', s); updateStatus('encrypting', s); }}
           />
         </Toolbar>
@@ -126,7 +129,8 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       )}
       {status.loading === true && ( 
         <div className="placeholder">
-          <CircularProgress color="secondary" size={100} />
+          { progress > 0 && <p className="progress-value">{`${Number(progress * 100).toFixed(0)}%`}</p> }
+          <CircularProgress className="progress-spinner" color="secondary" size={100} />
           { status.transferring && <p>Transferring your diary to your cloud</p> }
           { status.encrypting && <p>Encrypting your diary</p> }
         </div>

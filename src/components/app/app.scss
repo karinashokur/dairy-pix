@@ -3,4 +3,13 @@
   .appbar-title {
     flex-grow: 1;
   }
+  .progress-spinner {
+    margin-bottom: 20px;
+  }
+  .progress-value {
+    position: absolute;
+    width: 100px;
+    top: 40px;
+    display: inline-block;
+  }
 }
