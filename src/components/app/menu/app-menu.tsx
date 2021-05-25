@@ -10,13 +10,13 @@ const ArrowBackIosFixed = () => createElement(ArrowBackIos, { style: { transform
 interface AppMenuProps {
   repository: {url: string, name: string, logoSrc: string};
   displayYear: number;
-  isLocked: boolean;
+  disabled: boolean;
   setDisplayYear: (year: number) => void;
   setEncrypting: (isEncrypting: boolean) => void;
   setProgress: (value: number) => void;
 }
 const AppMenu: React.FC<AppMenuProps> = (
-  { repository, displayYear, isLocked, setDisplayYear, setEncrypting, setProgress },
+  { repository, displayYear, disabled, setDisplayYear, setEncrypting, setProgress },
 ) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [passwordInput, setPasswordInput] = useState<boolean>(false);
@@ -50,7 +50,7 @@ const AppMenu: React.FC<AppMenuProps> = (
         <li className="year-selection">
           <IconButton
             color="inherit"
-            disabled={isLocked}
+            disabled={disabled}
             onClick={() => setDisplayYear(displayYear - 1)}
           >
             <ArrowBackIosFixed />
@@ -58,14 +58,17 @@ const AppMenu: React.FC<AppMenuProps> = (
           <span>{displayYear}</span>
           <IconButton
             color="inherit"
-            disabled={displayYear >= new Date().getFullYear() || isLocked}
+            disabled={displayYear >= new Date().getFullYear() || disabled}
             onClick={() => setDisplayYear(displayYear + 1)}
           >
             <ArrowForwardIos />
           </IconButton>
         </li>
-        {!CryptoService.isEnabled() && !isLocked && (
-          <MenuItem onClick={() => { setAnchor(null); setPasswordInput(true); }}>
+        {!CryptoService.isEnabled() && (
+          <MenuItem
+            disabled={disabled}
+            onClick={() => { setAnchor(null); setPasswordInput(true); }}
+          >
             <Lock />
             <span>Enable Encryption</span>
           </MenuItem>

@@ -6,7 +6,7 @@ export default abstract class CryptoService {
   private static passphrase: string | false = false;
   static init(password: string, checkCipher?: string): string | false {
     if (!this.passphrase) {
-      const passwordHash = CryptoJS.HmacSHA256(password, CryptoJS.MD5(password)).toString();
+      const passwordHash = CryptoJS.SHA256(password).toString();
       if (checkCipher) {
         try {
           const value = CryptoJS.AES.decrypt(checkCipher, passwordHash).toString(CryptoJS.enc.Utf8);

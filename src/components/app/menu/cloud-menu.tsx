@@ -36,15 +36,15 @@ const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
   );
   return (
     <Fragment>
-      <Tooltip title={!StorageHandler.cloud ? 'Connect Your Cloud' : ''}>
+      <Tooltip title={!StorageHandler.cloud && !saving ? 'Connect Your Cloud' : ''}>
         <IconButton color="inherit" onClick={e => { if (!saving) setAnchor(e.currentTarget); }}>
-          {!StorageHandler.cloud && ( 
+          {!StorageHandler.cloud && !saving && ( 
             <CloudQueue />
           )}
           {StorageHandler.cloud && !saving && ( 
             <CloudDone />
           )}
-          {StorageHandler.cloud && saving && ( 
+          {saving && ( 
             <CircularProgress color="secondary" size={24} />
           )}
         </IconButton>

@@ -113,11 +113,14 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       <AppBar className="appbar" position="static">
         <Toolbar variant="dense">
           <Typography variant="h6" className="appbar-title">{name}</Typography>
-          <CloudMenu saving={status.saving} onDisconnect={init} />
+          <CloudMenu
+            saving={status.saving || status.transferring || status.encrypting}
+            onDisconnect={init}
+          />
           <AppMenu
             repository={repository}
             displayYear={displayYear}
-            isLocked={!!locked}
+            disabled={!!locked || !!status.transferring || !!status.encrypting}
             setDisplayYear={loadYear}
             setProgress={setProgress}
             setEncrypting={s => { updateStatus('loading', s); updateStatus('encrypting', s); }}
