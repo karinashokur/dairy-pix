@@ -1,9 +1,10 @@
 import bugsnag from '@bugsnag/browser';
 import bugsnagReact from '@bugsnag/plugin-react';
 import React from 'react';
+import { version } from '../../package.json';
 export const bugsnagClient = bugsnag({
   apiKey: process.env.REACT_APP_BUGSNAG || 'disabled',
-  appVersion: process.env.REACT_APP_VERSION,
+  appVersion: version,
   releaseStage: process.env.NODE_ENV,
   notifyReleaseStages: ['production', 'testing'],
   collectUserIp: false,

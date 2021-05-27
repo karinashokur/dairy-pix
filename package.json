@@ -1,6 +1,6 @@
 {
   "name": "pixel-diary",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@bugsnag/browser": "^6.4.1",

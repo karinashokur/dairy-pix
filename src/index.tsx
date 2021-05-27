@@ -1,6 +1,7 @@
 import { SnackbarProvider } from 'notistack';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { version } from '../package.json';
 import gitlabLogo from './assets/gitlab.svg';
 import App from './components/app/app';
 import Bugsnag from './helper/bugsnag';
@@ -22,4 +23,4 @@ ReactDOM.render(
   document.getElementById('root'),
 );
 serviceWorker.register();
-console.log(`Version ${process.env.REACT_APP_VERSION} (${process.env.NODE_ENV})`);
+console.log(`Version ${version} (${process.env.NODE_ENV})`);
