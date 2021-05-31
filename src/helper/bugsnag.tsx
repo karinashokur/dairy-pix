@@ -5,7 +5,7 @@ import { version } from '../../package.json';
 export const bugsnagClient = bugsnag({
   apiKey: process.env.REACT_APP_BUGSNAG || 'disabled',
   appVersion: version,
-  releaseStage: process.env.NODE_ENV,
+  releaseStage: process.env.REACT_APP_ENVIRONMENT || process.env.NODE_ENV,
   notifyReleaseStages: ['production', 'testing'],
   collectUserIp: false,
   autoCaptureSessions: false,

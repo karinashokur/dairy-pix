@@ -23,4 +23,4 @@ ReactDOM.render(
   document.getElementById('root'),
 );
 serviceWorker.register();
-console.log(`Version ${version} (${process.env.NODE_ENV})`);
+console.log(`Version ${version} (${process.env.REACT_APP_ENVIRONMENT || process.env.NODE_ENV})`);
