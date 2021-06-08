@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Menu, MenuItem } from '@material-ui/core';
 import { ArrowBackIos, ArrowForwardIos, Lock, MoreVert, Security } from '@material-ui/icons';
 import React, { createElement, useState } from 'react';
+import { version } from '../../../../package.json';
 import privacyInfo from '../../../privacy';
 import CryptoService from '../../../services/crypto-service';
 import StorageHandler from '../../../storage/storage-handler';
@@ -79,7 +80,10 @@ const AppMenu: React.FC<AppMenuProps> = (
         </MenuItem>
         <MenuItem onClick={() => window.open(repository.url, '_blank')}>
           <div className="menu-icon"><img src={repository.logoSrc} alt="Tanuki" /></div>
-          <span>{`View on ${repository.name}`}</span>
+          <span>
+            {`Source on ${repository.name}`}
+            <span className="sup">{`version ${version}`}</span>
+          </span>
         </MenuItem>
       </Menu>
       <Dialog open={privacyDialog} onClose={closePrivacyDialog}>

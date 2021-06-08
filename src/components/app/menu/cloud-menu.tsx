@@ -30,7 +30,7 @@ const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
       </div>
       <span>
         {CloudsMeta[variant].name}
-        {!CloudsMeta[variant].configured && <span className="unavailable">not available</span>}
+        {!CloudsMeta[variant].configured && <span className="sup warn">not available</span>}
       </span>
     </MenuItem>
   );
