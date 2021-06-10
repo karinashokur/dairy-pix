@@ -1,3 +1,7 @@
+1.0.2 - TBD
+------------------
+- The current version number is now displayed in the menu
+- Error reports now include a user id that gets randomly generated on each new session. This is used to distinguish errors from different user sessions
 1.0.1 - 07.11.2019
 ------------------
 - Fixed an issue where saving changes to an existing year failed when being connected to Google Drive

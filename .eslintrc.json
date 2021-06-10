@@ -30,6 +30,7 @@
     "document": true,
     "FileReader": true,
     "localStorage": true,
+    "sessionStorage": true,
     "window": true,
     "fetch": true,
     "it": true,
