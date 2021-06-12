@@ -1,4 +1,5 @@
 import { isArray } from 'util';
+import { bugsnagClient } from '../helper/bugsnag';
 import CryptoService from '../services/crypto-service';
 import { CloudAuthenticationError, CloudInitError, CloudRateLimitError, CloudTransferError, LocalStorageError } from '../types/errors';
 import SupportedClouds from '../types/supported-clouds';
@@ -26,6 +27,7 @@ export default abstract class StorageHandler {
   }
   static async save(key: string, value: string): Promise<void> {
     if (!this.initialized) this.init();
+    bugsnagClient.leaveBreadcrumb('Saving to storage', key);
     const cryptoValue = key === 'encryption' ? value : CryptoService.encrypt(value);
     if (this.cloud) {
       try {
@@ -44,6 +46,7 @@ export default abstract class StorageHandler {
   }
   static async load(key: string): Promise<string | null> {
     if (!this.initialized) this.init();
+    bugsnagClient.leaveBreadcrumb('Loading from storage', key);
     try {
       let value: string | null = localStorage.getItem(key);
       if (this.cloud) {
@@ -78,6 +81,7 @@ export default abstract class StorageHandler {
       try {
         this.cloud.init();
         localStorage.setItem('storage', variant.toString());
+        bugsnagClient.leaveBreadcrumb('Cloud storage connected');
       } catch (e) {
         if (!(e instanceof CloudInitError)) throw e;
         this.cloud = false;
@@ -88,6 +92,7 @@ export default abstract class StorageHandler {
   static async transferToCloud(progress?: (value: number) => void): Promise<void> {
     if (!this.cloud || !this.index.length) return;
     if ((await this.cloud.list()).length > 0) throw new CloudTransferError();
+    bugsnagClient.leaveBreadcrumb('Transferring local data to cloud storage');
     let done = 0;
     const requests: Promise<void>[] = [];
     this.index.forEach(key => {
@@ -103,6 +108,7 @@ export default abstract class StorageHandler {
     this.index = [];
   }
   static async rewriteAll(progress?: (value: number) => void): Promise<void> {
+    bugsnagClient.leaveBreadcrumb('Rewriting storage data');
     const keys = await this.list();
     const loadRequests: Promise<void>[] = [];
     const saveRequests: Promise<void>[] = [];
@@ -123,6 +129,7 @@ export default abstract class StorageHandler {
     this.cloud.disconnect();
     this.cloud = false;
     localStorage.removeItem('storage');
+    bugsnagClient.leaveBreadcrumb('Cloud storage disconnected');
   }
   private static catchDisconnect(error: any): boolean {
     if (error instanceof CloudAuthenticationError) {

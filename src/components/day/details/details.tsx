@@ -31,7 +31,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
     background-color: ${Moods[inputData.mood || 0].color};
   `;
   return (
-    <Dialog className="day-details" open onClose={() => onClose()}>
+    <Dialog id="day-details" className="day-details" open onClose={() => onClose()}>
       <DialogTitle>{date.toLocaleDateString(dateString.locale, dateString.options)}</DialogTitle>
       <DialogContent>
         <div className="mood-selection">
@@ -48,6 +48,7 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
           </FormControl>
         </div>
         <TextField
+          id="day-details-note"
           name="note"
           label="Note"
           multiline
@@ -61,8 +62,8 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(inputData)} color="primary">Apply</Button>
-        <Button onClick={() => onClose()} color="primary">Close</Button>
+        <Button id="day-details-apply" onClick={() => onClose(inputData)} color="primary">Apply</Button>
+        <Button id="day-details-close" onClick={() => onClose()} color="primary">Close</Button>
       </DialogActions>
     </Dialog>
   );

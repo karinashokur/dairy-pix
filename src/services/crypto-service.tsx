@@ -17,6 +17,7 @@ export default abstract class CryptoService {
         }
       }
       this.passphrase = passwordHash;
+      bugsnagClient.leaveBreadcrumb('Crypto Service initialized');
     }
     return CryptoJS.AES.encrypt(this.checkValue, this.passphrase).toString();
   }

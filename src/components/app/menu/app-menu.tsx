@@ -38,7 +38,7 @@ const AppMenu: React.FC<AppMenuProps> = (
   };
   return (
     <div>
-      <IconButton color="inherit" onClick={event => setAnchor(event.currentTarget)}>
+      <IconButton id="app-menu" color="inherit" onClick={event => setAnchor(event.currentTarget)}>
         <MoreVert />
       </IconButton>
       <Menu
@@ -50,6 +50,7 @@ const AppMenu: React.FC<AppMenuProps> = (
       >
         <li className="year-selection">
           <IconButton
+            id="app-menu-prev-year"
             color="inherit"
             disabled={disabled}
             onClick={() => setDisplayYear(displayYear - 1)}
@@ -58,6 +59,7 @@ const AppMenu: React.FC<AppMenuProps> = (
           </IconButton>
           <span>{displayYear}</span>
           <IconButton
+            id="app-menu-next-year"
             color="inherit"
             disabled={displayYear >= new Date().getFullYear() || disabled}
             onClick={() => setDisplayYear(displayYear + 1)}
@@ -78,7 +80,7 @@ const AppMenu: React.FC<AppMenuProps> = (
           <Security />
           <span>Privacy</span>
         </MenuItem>
-        <MenuItem onClick={() => window.open(repository.url, '_blank')}>
+        <MenuItem id="app-menu-privacy" onClick={() => window.open(repository.url, '_blank')}>
           <div className="menu-icon"><img src={repository.logoSrc} alt="Tanuki" /></div>
           <span>
             {`Source on ${repository.name}`}

@@ -21,6 +21,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ onClose }) => {
         </p>
         <div className="password">
           <TextField
+            id="password-input-field"
             type={showPassword ? 'text' : 'password'}
             label="Password"
             value={password}
@@ -44,13 +45,14 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ onClose }) => {
       </DialogContent>
       <DialogActions>
         <Button
+          id="password-input-apply"
           color="primary"
           disabled={!password || password.length < 8}
           onClick={() => onClose(password)}
         >
           {'Enable'}
         </Button>
-        <Button onClick={() => onClose()} color="primary">Close</Button>
+        <Button id="password-input-cancel" onClick={() => onClose()} color="primary">Close</Button>
       </DialogActions>
     </Dialog>
   );

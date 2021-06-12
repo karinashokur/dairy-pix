@@ -21,6 +21,7 @@ const Lockscreen: React.FC<LockscreenProps> = ({ checkCipher, onUnlock }) => {
       <Lock className="icon" />
       <div className="input-wrapper">
         <TextField
+          id="lockscreen-input"
           className="input"
           type="password"
           label="Password"
