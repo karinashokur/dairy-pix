@@ -1,4 +1,4 @@
-1.0.2 - TBD
+1.0.2 - 13.11.2019
 ------------------
 - The current version number is now displayed in the menu
 - Added some manual breadcrumbs for error reports
