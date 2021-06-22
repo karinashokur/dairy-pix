@@ -1,7 +1,7 @@
 import { AppBar, Button, CircularProgress, Toolbar, Typography } from '@material-ui/core';
 import { Warning } from '@material-ui/icons';
 import { OptionsObject, withSnackbar, WithSnackbarProps } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { bugsnagClient } from '../../helper/bugsnag';
 import DataService from '../../services/data-service';
 import StorageHandler from '../../storage/storage-handler';
@@ -153,4 +153,4 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
     </div>
   );
 };
-export default withSnackbar(App);
+export default withSnackbar(memo(App));

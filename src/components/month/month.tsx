@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Day from '../day/day';
 import './month.scss';
 interface MonthProps {
@@ -21,4 +21,4 @@ const Month: React.FC<MonthProps> = ({ date, onDayUpdated }) => {
   }
   return <div className="month">{renderDays}</div>;
 };
-export default Month;
+export default memo(Month);

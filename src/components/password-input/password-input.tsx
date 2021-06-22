@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText, IconButton, InputAdornment, TextField } from '@material-ui/core';
 import { Lock, Visibility, VisibilityOff } from '@material-ui/icons';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import './password-input.scss';
 interface PasswordInputProps {
   onClose: (password?: string) => void;
@@ -57,4 +57,4 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ onClose }) => {
     </Dialog>
   );
 };
-export default PasswordInput;
+export default memo(PasswordInput);

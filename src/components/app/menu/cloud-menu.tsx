@@ -1,6 +1,6 @@
 import { CircularProgress, IconButton, Menu, MenuItem, Tooltip } from '@material-ui/core';
 import { CloudDone, CloudOff, CloudQueue } from '@material-ui/icons';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, memo, useState } from 'react';
 import CryptoService from '../../../services/crypto-service';
 import DataService from '../../../services/data-service';
 import StorageHandler from '../../../storage/storage-handler';
@@ -72,4 +72,4 @@ const CloudMenu: React.FC<CloudMenuProps> = ({ saving, onDisconnect }) => {
     </Fragment>
   );
 };
-export default CloudMenu;
+export default memo(CloudMenu);

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, memo, useState } from 'react';
 import styled from 'styled-components';
 import { isNumber } from 'util';
 import DataService from '../../services/data-service';
@@ -40,4 +40,4 @@ const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
     </Fragment>
   );
 };
-export default Day;
+export default memo(Day);

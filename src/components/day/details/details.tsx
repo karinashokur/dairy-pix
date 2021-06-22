@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FilledInput, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import styled from 'styled-components';
 import IDay from '../../../types/day';
 import Moods from '../../../types/moods';
@@ -68,4 +68,4 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
     </Dialog>
   );
 };
-export default DayDetails;
+export default memo(DayDetails);

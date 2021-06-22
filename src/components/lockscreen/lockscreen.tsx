@@ -1,6 +1,6 @@
 import { FormHelperText, IconButton, InputAdornment, TextField } from '@material-ui/core';
 import { ArrowForward, Lock } from '@material-ui/icons';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import CryptoService from '../../services/crypto-service';
 import './lockscreen.scss';
 interface LockscreenProps {
@@ -45,4 +45,4 @@ const Lockscreen: React.FC<LockscreenProps> = ({ checkCipher, onUnlock }) => {
     </div>
   );
 };
-export default Lockscreen;
+export default memo(Lockscreen);

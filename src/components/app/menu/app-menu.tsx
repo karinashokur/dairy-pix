@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Menu, MenuItem } from '@material-ui/core';
 import { ArrowBackIos, ArrowForwardIos, Lock, MoreVert, Security } from '@material-ui/icons';
-import React, { createElement, useState } from 'react';
+import React, { createElement, memo, useState } from 'react';
 import { version } from '../../../../package.json';
 import privacyInfo from '../../../privacy';
 import CryptoService from '../../../services/crypto-service';
@@ -102,4 +102,4 @@ const AppMenu: React.FC<AppMenuProps> = (
     </div>
   );
 };
-export default AppMenu;
+export default memo(AppMenu);

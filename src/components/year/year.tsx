@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Month from '../month/month';
 import './year.scss';
 interface YearProps {
@@ -18,4 +18,4 @@ const Year: React.FC<YearProps> = ({ year, onDayUpdated }) => {
   }
   return <div className="year">{renderMonths}</div>;
 };
-export default Year;
+export default memo(Year);
