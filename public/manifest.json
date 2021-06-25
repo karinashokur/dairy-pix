@@ -3,7 +3,7 @@
   "name": "Pixel Diary",
   "icons": [
     {
-      "src": "diary-favicon.png",
+      "src": "appicon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
