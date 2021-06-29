@@ -1,7 +1,7 @@
-import { AppBar, Button, CircularProgress, Toolbar, Typography } from '@material-ui/core';
-import { Warning } from '@material-ui/icons';
+import { AppBar, Button, CircularProgress, IconButton, Toolbar, Typography } from '@material-ui/core';
+import { Close, Warning } from '@material-ui/icons';
 import { OptionsObject, withSnackbar, WithSnackbarProps } from 'notistack';
-import React, { memo, useEffect, useState } from 'react';
+import React, { Fragment, memo, useEffect, useState } from 'react';
 import { bugsnagClient } from '../../helper/bugsnag';
 import DataService from '../../services/data-service';
 import StorageHandler from '../../storage/storage-handler';
@@ -14,9 +14,10 @@ import CloudMenu from './menu/cloud-menu';
 interface AppProps {
   name: string;
   repository: {url: string, name: string, logoSrc: string};
+  update?: () => void;
 }
 const App: React.FC<AppProps & WithSnackbarProps> = (
-  { name, repository, enqueueSnackbar, closeSnackbar },
+  { name, repository, update, enqueueSnackbar, closeSnackbar },
 ) => {
   const [displayYear, setDisplayYear] = useState<number>(new Date().getFullYear());
   const [status, setStatus] = useState<{[key: string]: boolean | 'error'}>({
@@ -30,7 +31,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
   const infoSnackbarOpt: OptionsObject = {
     variant: 'info',
     persist: true,
-    action: key => <Button onClick={() => { closeSnackbar(key); }}>Ok</Button>,
+    action: key => <Button onClick={() => closeSnackbar(key)}>Ok</Button>,
   };
   const updateStatus = (key: string, value: boolean | 'error'): void => {
     setStatus(oldStatus => ({ ...oldStatus, [key]: value }));
@@ -94,7 +95,22 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       return true;
     }
   };
+  const checkForUpdate = (): void => {
+    if (!update) return;
+    console.log('test');
+    enqueueSnackbar('A new version is available', {
+      variant: 'info',
+      persist: true,
+      action: key => (
+        <Fragment>
+          <Button onClick={update}>UPDATE</Button>
+          <IconButton onClick={() => closeSnackbar(key)}><Close /></IconButton>
+        </Fragment>
+      ),
+    });
+  };
   const init = async (): Promise<void> => {
+    checkForUpdate();
     StorageHandler.init();
     StorageHandler.onForcedDisconnect = () => {
       DataService.clearCache();
