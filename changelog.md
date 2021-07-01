@@ -1,3 +1,6 @@
+1.1.0 - TBD
+------------------
+- **Issue** #14: An indicator will be shown if a newer version is available, allowing to update immediately instead of having to waiting until the next session
 1.0.2 - 13.11.2019
 ------------------
 - The current version number is now displayed in the menu
