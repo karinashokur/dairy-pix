@@ -8,13 +8,9 @@ import Bugsnag from './helper/bugsnag';
 import './index.scss';
 import * as serviceWorker from './serviceWorker';
 const Root: React.FC = () => {
-  const [updateCallback, setUpdateCallback] = useState<(() => void) | undefined>(undefined);
+  const [workerReg, setWorkerReg] = useState<ServiceWorkerRegistration | undefined>(undefined);
   useEffect(() => {
-    serviceWorker.register({
-      onUpdate: (worker: ServiceWorkerRegistration) => setUpdateCallback(() => {
-        worker.unregister().then(() => window.location.reload());
-      }),
-    });
+    serviceWorker.register({ onUpdate: (reg: ServiceWorkerRegistration) => setWorkerReg(reg) });
   }, []);
   return (
     <Bugsnag>
@@ -26,7 +22,7 @@ const Root: React.FC = () => {
             url: 'https:
             logoSrc: gitlabLogo,
           }}
-          update={updateCallback}
+          update={workerReg && (() => workerReg.unregister().then(() => window.location.reload()))}
         />
       </SnackbarProvider>
     </Bugsnag>

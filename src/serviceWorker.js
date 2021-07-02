@@ -55,6 +55,9 @@ function registerValidSW(swUrl, config) {
           }
         };
       };
+      if (registration.active && registration.waiting) {
+        if (config && config.onUpdate) config.onUpdate(registration);
+      }
     })
     .catch(error => {
       console.error('Error during service worker registration:', error);

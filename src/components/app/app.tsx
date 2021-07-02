@@ -95,22 +95,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       return true;
     }
   };
-  const checkForUpdate = (): void => {
-    if (!update) return;
-    console.log('test');
-    enqueueSnackbar('A new version is available', {
-      variant: 'info',
-      persist: true,
-      action: key => (
-        <Fragment>
-          <Button onClick={update}>UPDATE</Button>
-          <IconButton onClick={() => closeSnackbar(key)}><Close /></IconButton>
-        </Fragment>
-      ),
-    });
-  };
   const init = async (): Promise<void> => {
-    checkForUpdate();
     StorageHandler.init();
     StorageHandler.onForcedDisconnect = () => {
       DataService.clearCache();
@@ -123,6 +108,19 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
       await loadYear(displayYear);
     }
   };
+  useEffect(() => {
+    if (!update) return;
+    enqueueSnackbar('A new version is available!', {
+      variant: 'info',
+      persist: true,
+      action: key => (
+        <Fragment>
+          <Button onClick={update}>UPDATE</Button>
+          <IconButton onClick={() => closeSnackbar(key)}><Close /></IconButton>
+        </Fragment>
+      ),
+    });
+  }, [update]); 
   useEffect(() => { init(); }, []); 
   return (
     <div className="app">
