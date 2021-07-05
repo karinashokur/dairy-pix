@@ -138,6 +138,7 @@ const App: React.FC<AppProps & WithSnackbarProps> = (
             setDisplayYear={loadYear}
             setProgress={setProgress}
             setEncrypting={s => { updateStatus('loading', s); updateStatus('encrypting', s); }}
+            update={update}
           />
         </Toolbar>
       </AppBar>
