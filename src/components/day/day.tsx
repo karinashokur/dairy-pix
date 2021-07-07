@@ -15,9 +15,11 @@ interface DayProps {
 const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
   const [data, setData] = useState<IDay>(DataService.getDay(date) || {});
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const dateOptions = { month: 'long', day: '2-digit' };
   const classes = classNames({
     day: true,
     filler: isFiller,
+    blink: data.mood === undefined && date.toDateString() === new Date().toDateString(),
   });
   const Pixel = styled.div`
     background-color: ${isNumber(data.mood) ? Moods[data.mood].color : null};
@@ -31,7 +33,11 @@ const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
   };
   return (
     <Fragment>
-      <Pixel className={classes} onClick={!isFiller ? () => setShowDetails(true) : undefined}>
+      <Pixel
+        className={classes}
+        onClick={!isFiller ? () => setShowDetails(true) : undefined}
+        title={!isFiller ? date.toLocaleDateString('default', dateOptions) : ''} 
+      >
         {data.note && !isFiller && <span className="note-indicator"></span>}
       </Pixel>
       {showDetails && ( 

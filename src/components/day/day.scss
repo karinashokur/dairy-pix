@@ -4,10 +4,18 @@
   align-items: center;
   cursor: pointer;
   background: #37474f;
-}
-.day.filler {
-  cursor: not-allowed;
-  background: repeating-linear-gradient(-45deg, #37474f, #37474f 3px, #282c34 3px, #282c34 6px)
+  &.filler {
+    cursor: not-allowed;
+    background: repeating-linear-gradient(-45deg, #37474f, #37474f 3px, #282c34 3px, #282c34 6px)
+  }
+  &.blink {
+    animation: blinking 2s linear infinite;
+  }
+  @keyframes blinking {
+    50% {
+      background-color: white;
+    }
+  }
 }
 .note-indicator {
   display: none;
