@@ -16,9 +16,10 @@ const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
   const [data, setData] = useState<IDay>(DataService.getDay(date) || {});
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const dateOptions = { month: 'long', day: '2-digit' };
+  const isFuture = date.getTime() > new Date().getTime();
   const classes = classNames({
     day: true,
-    filler: isFiller,
+    filler: isFiller || isFuture,
     blink: data.mood === undefined && date.toDateString() === new Date().toDateString(),
   });
   const Pixel = styled.div`
@@ -35,10 +36,16 @@ const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
     <Fragment>
       <Pixel
         className={classes}
-        onClick={!isFiller ? () => setShowDetails(true) : undefined}
+        onClick={!isFiller && !isFuture ? () => setShowDetails(true) : undefined}
         title={!isFiller ? date.toLocaleDateString('default', dateOptions) : ''} 
       >
         {data.note && !isFiller && <span className="note-indicator"></span>}
+        {!date.getMonth() && !(date.getDate() % 5) && !isFiller
+          && <span className="label">{date.getDate()}</span>
+        }
+        {date.getDate() === 1 && !(date.getMonth() % 2) && !isFiller
+          && <span className="label">{date.toLocaleString('en-US', { month: 'short' })}</span>
+        }
       </Pixel>
       {showDetails && ( 
         <DayDetails date={date} values={data} onClose={handleDetailsClose} />

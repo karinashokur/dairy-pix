@@ -15,7 +15,7 @@ const Month: React.FC<MonthProps> = ({ date, onDayUpdated }) => {
         key={`${year}-${month}-${i}`}
         date={new Date(year, month, i)}
         onUpdate={onDayUpdated}
-        isFiller={i > daysInMonth() || new Date(year, month, i).getTime() > new Date().getTime()}
+        isFiller={i > daysInMonth()}
       />,
     );
   }

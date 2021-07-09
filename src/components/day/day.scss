@@ -11,22 +11,36 @@
   &.blink {
     animation: blinking 2s linear infinite;
   }
+  .note-indicator {
+    display: none;
+    background-color: white;
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    position: absolute;
+  }
+  .label {
+    position: absolute;
+    font-size: 2vmin;
+    color: white;
+    animation: fadeout 3s ease-in 1 forwards;
+  }
   @keyframes blinking {
     50% {
       background-color: white;
     }
   }
-}
-.note-indicator {
-  display: none;
-  background-color: white;
-  width: 10px;
-  height: 10px;
-  border-radius: 10px;
-  position: absolute;
+  @keyframes fadeout {
+    100% {
+      opacity: 0;
+    }
+  }
 }
 .year:hover {
-  .note-indicator {
+  .day .note-indicator:only-child { // only displayed if the pixel is not labeled
     display: block;
+  }
+  .day .label {
+    animation: fadeout 0s linear 1 reverse;
   }
 }
