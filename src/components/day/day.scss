@@ -21,9 +21,18 @@
   }
   .label {
     position: absolute;
-    font-size: 2vmin;
     color: white;
     animation: fadeout 3s ease-in 1 forwards;
+  }
+  @media screen and (orientation: landscape) {
+    .label {
+      font-size: 1.5vmin;
+    }
+  }
+  @media screen and (orientation: portrait) {
+    .label {
+      font-size: 2vmin;
+    }
   }
   @keyframes blinking {
     50% {

@@ -4,7 +4,7 @@ const privacyInfo = (
     <p>
       This website does not use cookies and does not collect any kind of personal information about
       its visitors. All information entered on this website, for example a mood or a note (hereafter
-      called "Diary Content"), are stored in the integrated storage of the visitors browser, unless
+      called "Diary Content"), is stored in the integrated storage of the visitors browser, unless
       the visitor chooses to connect a cloud storage (see "Cloud Storage").
     </p>
     <h4>Information Collected for Error Reporting</h4>
