@@ -3,5 +3,18 @@
     display: grid;
     grid-template-columns: 10% 88%;
     grid-gap: 2%;
+    .MuiSelect-root div {
+      display: none; // hide the mood color inside the select field
+    }
+  }
+}
+#menu-mood {
+  .mood-menu-item {
+    display: grid;
+    grid-template-columns: 15px auto;
+    grid-gap: 10px;
+  }
+  .MuiPopover-paper {
+    margin-left: -24px
   }
 }

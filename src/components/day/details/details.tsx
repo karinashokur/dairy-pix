@@ -43,7 +43,18 @@ const DayDetails: React.FC<DayDetailsProps> = ({ date, values, onClose }) => {
               onChange={handleChange}
               input={<FilledInput name="mood" id="mood-select" />}
             >
-              {Moods.map((v, i) => <MenuItem key={v.color} value={i}>{v.name}</MenuItem>)}
+              {Moods.map((v, i) => {
+                const MoodColor = styled.div`
+                  background-color: ${v.color};
+                  height: 80%;
+                `;
+                return (
+                  <MenuItem className="mood-menu-item" key={v.color} value={i}>
+                    <MoodColor />
+                    <span>{v.name}</span>
+                  </MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
         </div>

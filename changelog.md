@@ -1,6 +1,8 @@
 1.1.0 - TBD
 ------------------
-- **Issue** #14: An indicator will be shown if a newer version is available, allowing to update immediately instead of having to waiting until the next session
+- **Issue** #14: A notification will be shown whenever a newer version is available, allowing to update immediately instead of on next session
+- **Issue** #17: Added labels to the grid, that show the months and days. Additionally, the current day is now highlighted until a mood is selected
+- The color of each mood is now displayed in the select list, to add some visual aid when selecting the mood on a day
 1.0.2 - 13.11.2019
 ------------------
 - The current version number is now displayed in the menu
