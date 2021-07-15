@@ -1,6 +1,6 @@
 const Moods: {color: string, name: string}[] = [
   { color: '#2196F3', name: 'Normal / Average' },
-  { color: '#26C6DA', name: 'Good / Happy' },
+  { color: '#4dd0e1', name: 'Good / Happy' },
   { color: '#FFEB3B', name: 'Fantastic / Amazing' },
   { color: '#F48FB1', name: 'Relaxed' },
   { color: '#ff9800', name: 'Stressed / Frantic' },
