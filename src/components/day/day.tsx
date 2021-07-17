@@ -15,7 +15,6 @@ interface DayProps {
 const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
   const [data, setData] = useState<IDay>(DataService.getDay(date) || {});
   const [showDetails, setShowDetails] = useState<boolean>(false);
-  const dateOptions = { month: 'long', day: '2-digit' };
   const isFuture = date.getTime() > new Date().getTime();
   const classes = classNames({
     day: true,
@@ -37,7 +36,6 @@ const Day: React.FC<DayProps> = ({ date, isFiller, onUpdate }) => {
       <Pixel
         className={classes}
         onClick={!isFiller && !isFuture ? () => setShowDetails(true) : undefined}
-        title={!isFiller ? date.toLocaleDateString('default', dateOptions) : ''} 
       >
         {data.note && !isFiller && <span className="note-indicator"></span>}
         {!date.getMonth() && !(date.getDate() % 5) && !isFiller

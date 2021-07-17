@@ -1,8 +1,10 @@
-1.1.0 - TBD
+1.0.3 - TBD
 ------------------
 - **Issue** #14: A notification will be shown whenever a newer version is available, allowing to update immediately instead of on next session
 - **Issue** #17: Added labels to the grid, that show the months and days. Additionally, the current day is now highlighted until a mood is selected
 - The color of each mood is now displayed in the select list, to add some visual aid when selecting the mood on a day
+- Slightly improved performance by reducing the amount of unnecessary re-renders after applying a mood to a day
+- Added app icons for Apple devices
 1.0.2 - 13.11.2019
 ------------------
 - The current version number is now displayed in the menu
